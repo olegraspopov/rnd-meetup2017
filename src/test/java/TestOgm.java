@@ -12,9 +12,6 @@ import javax.transaction.*;
 public class TestOgm {
     public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
-//        TransactionManager transactionManager = extractJBossTransactionManager(emf);
-//
-//        transactionManager.begin();
         EntityManager em =  emf.createEntityManager();
         em.getTransaction().begin();
         Breed collie = new Breed();
@@ -26,7 +23,7 @@ public class TestOgm {
         //persist dina
         em.persist(dina);
         em.getTransaction().commit();
-//        transactionManager.commit();
+
         //get ID dina
         Long dinaId = dina.getId();
         // query
