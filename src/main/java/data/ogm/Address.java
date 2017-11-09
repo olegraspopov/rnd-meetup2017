@@ -2,9 +2,7 @@ package data.ogm;
 
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Entity
 public class Address {
@@ -24,5 +22,10 @@ public class Address {
 
     private String street;
     private int zip;
+
+    public Address(String street, int zip) {
+        this.street = street;
+        this.zip = zip;
+    }
 
 }
