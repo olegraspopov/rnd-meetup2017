@@ -6,6 +6,7 @@
     <persistence-unit name="ogm-jpa-tutorial" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ogm.jpa.HibernateOgmPersistence</provider>
         <properties>
+            <property name="hibernate.transaction.jta.platform" value="JBossTS"/>
             <property name="com.arjuna.ats.jta.jtaTMImplementation" value="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"/>
             <property name="com.arjuna.ats.jta.jtaUTImplementation" value="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"/>
             <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.ignite.impl.IgniteDatastoreProvider"/>
