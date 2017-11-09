@@ -10,7 +10,7 @@
             <property name="com.arjuna.ats.jta.jtaTMImplementation" value="com.arjuna.ats.internal.jta.transaction.arjunacore.TransactionManagerImple"/>
             <property name="com.arjuna.ats.jta.jtaUTImplementation" value="com.arjuna.ats.internal.jta.transaction.arjunacore.UserTransactionImple"/>
             <property name="hibernate.ogm.datastore.provider" value="org.hibernate.ogm.datastore.ignite.impl.IgniteDatastoreProvider"/>
-            <property name="hibernate.ogm.ignite.configuration_class_name" value="ignite.ogm.ConfigurationMaker"/>
+            <property name="hibernate.ogm.ignite.configuration_class_name" value="ignite.ConfigurationMaker"/>
         </properties>
     </persistence-unit>
 </persistence>
