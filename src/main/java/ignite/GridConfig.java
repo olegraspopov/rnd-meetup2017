@@ -23,6 +23,7 @@ final class GridConfig {
         igniteConfiguration.setPeerClassLoadingEnabled(true);
         igniteConfiguration.setLocalHost("127.0.0.1");
         igniteConfiguration.setClientMode(clientMode);
+        igniteConfiguration.setGridName("testGrid-server");
         return igniteConfiguration;
     }
 }

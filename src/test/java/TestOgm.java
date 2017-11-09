@@ -7,7 +7,12 @@ import org.hibernate.jpa.HibernateEntityManagerFactory;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
-import javax.transaction.*;
+import javax.transaction.HeuristicMixedException;
+import javax.transaction.HeuristicRollbackException;
+import javax.transaction.NotSupportedException;
+import javax.transaction.RollbackException;
+import javax.transaction.SystemException;
+import javax.transaction.TransactionManager;
 
 public class TestOgm {
     public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
@@ -32,8 +37,5 @@ public class TestOgm {
         em.close();
     }
 
-    private static TransactionManager extractJBossTransactionManager(EntityManagerFactory factory) {
-        SessionFactoryImplementor sessionFactory = ( (HibernateEntityManagerFactory) factory ).getSessionFactory();
-        return sessionFactory.getServiceRegistry().getService( JtaPlatform.class).retrieveTransactionManager();
-    }
+
 }
