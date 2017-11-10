@@ -1,8 +1,9 @@
 package data.ogm;
 
-import org.hibernate.annotations.GenericGenerator;
-
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 @Entity
 public class Address {
@@ -10,8 +11,7 @@ public class Address {
     private Long id;
 
     @Id
-    @GeneratedValue(generator = "increment")
-    @GenericGenerator(name = "increment", strategy = "increment")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long getId() {
         return id;
     }
