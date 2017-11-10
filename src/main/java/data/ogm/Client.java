@@ -13,6 +13,11 @@ public class Client {
 
     private Collection<Address> addresses;
 
+    public Client(String name, String inn) {
+        this.name = name;
+        this.inn = inn;
+    }
+
     @Id
     public Long getId() {
         return id;
