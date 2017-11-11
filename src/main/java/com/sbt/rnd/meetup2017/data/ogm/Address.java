@@ -1,4 +1,4 @@
-package data.ogm;
+package com.sbt.rnd.meetup2017.data.ogm;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;

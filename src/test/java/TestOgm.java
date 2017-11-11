@@ -1,9 +1,11 @@
-import data.ogm.Account;
-import data.ogm.Address;
-import data.ogm.Client;
-import data.ogm.Document;
-import data.ogm.breed_n_dog.Breed;
-import data.ogm.breed_n_dog.Dog;
+import com.sbt.rnd.meetup2017.data.ogm.Account;
+import com.sbt.rnd.meetup2017.data.ogm.Address;
+import com.sbt.rnd.meetup2017.data.ogm.Client;
+import com.sbt.rnd.meetup2017.data.ogm.Document;
+import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
+import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Dog;
+import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
+import org.apache.ignite.Ignite;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,6 +18,8 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -23,6 +27,8 @@ import static org.junit.Assert.assertThat;
 
 public class TestOgm {
     private EntityManager em;
+
+    private Ignite ignite;
 
     public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
@@ -62,13 +68,17 @@ public class TestOgm {
         Client client = new Client("Иванов", "1234567890");
         Account account = new Account(client, "123123123", "Счет 123123123");
         assertThat(account.getId(), is(nullValue(Long.class)));
-
+        Collection<Document> documents=new ArrayList<>();
+        //documents.add()
+        account.setDocs(documents);
+        account.setCurrency(new Currency("RUB", 810,"Российский рубль"));
         em.getTransaction().begin();
         assertThat(account.getId(), is(nullValue(Long.class)));
 
         em.persist(account);
         assertThat(account.getId(), is(notNullValue(Long.class)));
         assertThat(account.getClient(), is(notNullValue(Client.class)));
+        assertThat(account.getCurrency(), is(notNullValue(Currency.class)));
 
         Long id = account.getId();
         em.getTransaction().commit();

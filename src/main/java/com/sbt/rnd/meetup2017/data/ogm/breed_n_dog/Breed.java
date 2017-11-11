@@ -1,4 +1,4 @@
-package data.ogm.breed_n_dog;
+package com.sbt.rnd.meetup2017.data.ogm.breed_n_dog;
 
 import org.hibernate.annotations.GenericGenerator;
 

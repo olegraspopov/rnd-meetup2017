@@ -1,4 +1,4 @@
-package data;
+package com.sbt.rnd.meetup2017.data;
 
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 
@@ -41,7 +41,7 @@ public class Client {
 
     @Override
     public String toString() {
-        return "data.Client{" +
+        return "com.sbt.rnd.meetup2017.data.Client{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", inn='" + inn + '\'' +
