@@ -59,7 +59,8 @@ public class TestOgm {
 
     @Test
     public void testAccountPersistAndRead() throws Exception {
-        Account account = new Account(50L, "123123123", "Счет 123123123");
+        Client client = new Client("Иванов", "1234567890");
+        Account account = new Account(client, "123123123", "Счет 123123123");
         assertThat(account.getId(), is(nullValue(Long.class)));
 
         em.getTransaction().begin();
@@ -67,6 +68,7 @@ public class TestOgm {
 
         em.persist(account);
         assertThat(account.getId(), is(notNullValue(Long.class)));
+        assertThat(account.getClient(), is(notNullValue(Client.class)));
 
         Long id = account.getId();
         em.getTransaction().commit();
@@ -119,7 +121,11 @@ public class TestOgm {
 
     @Test
     public void testDocumentPersistAndRead() throws Exception {
-        Document document = new Document(123L, 456L, 10000L, new Date(), "aim");
+        Client clientDt = new Client("Иванов", "1234567890");
+        Client clientCt = new Client("Петров", "6789054312");
+        Account accountDt = new Account(clientDt, "123123123", "Счет 123123123");
+        Account accountCt = new Account(clientCt, "321321", "Счет 321321");
+        Document document = new Document(accountDt, accountCt, 10000L, new Date(), "aim");
         assertThat(document.getId(), is(nullValue(Long.class)));
 
         em.getTransaction().begin();
@@ -127,6 +133,8 @@ public class TestOgm {
 
         em.persist(document);
         assertThat(document.getId(), is(notNullValue(Long.class)));
+        assertThat(document.getCreditAccount(), is(notNullValue(Account.class)));
+        assertThat(document.getDebetAccount(), is(notNullValue(Account.class)));
 
         Long id = document.getId();
         em.getTransaction().commit();
