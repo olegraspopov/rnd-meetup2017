@@ -1,6 +1,7 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -8,7 +9,7 @@ public class Document {
     private Long id;
     private Account debetAccount;
     private Account creditAccount;
-    private Long sumDoc;
+    private BigDecimal sumDoc;
     private Date dateDoc;
     private String aim;
 
@@ -22,7 +23,7 @@ public class Document {
         this.id = id;
     }
 
-    public Document(Account debetAccount, Account creditAccount, Long sumDoc, Date dateDoc, String aim) {
+    public Document(Account debetAccount, Account creditAccount, BigDecimal sumDoc, Date dateDoc, String aim) {
         this.debetAccount = debetAccount;
         this.creditAccount = creditAccount;
         this.sumDoc = sumDoc;
@@ -47,11 +48,11 @@ public class Document {
         this.creditAccount = creditAccount;
     }
 
-    public Long getSumDoc() {
+    public BigDecimal getSumDoc() {
         return sumDoc;
     }
 
-    public void setSumDoc(Long sumDoc) {
+    public void setSumDoc(BigDecimal sumDoc) {
         this.sumDoc = sumDoc;
     }
 
