@@ -18,6 +18,7 @@ import javax.transaction.HeuristicRollbackException;
 import javax.transaction.NotSupportedException;
 import javax.transaction.RollbackException;
 import javax.transaction.SystemException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -135,7 +136,7 @@ public class TestOgm {
         Client clientCt = new Client("Петров", "6789054312");
         Account accountDt = new Account(clientDt, "123123123", "Счет 123123123");
         Account accountCt = new Account(clientCt, "321321", "Счет 321321");
-        Document document = new Document(accountDt, accountCt, 10000L, new Date(), "aim");
+        Document document = new Document(accountDt, accountCt, BigDecimal.valueOf(10000), new Date(), "aim");
         assertThat(document.getId(), is(nullValue(Long.class)));
 
         em.getTransaction().begin();
