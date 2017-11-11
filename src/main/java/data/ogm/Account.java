@@ -1,17 +1,13 @@
 package data.ogm;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 public class Account {
     private Long id;
-    private Long clientId;
+    private Client client;
     private String accountNumber;
     private String name;
     private Date openDate;
@@ -29,19 +25,11 @@ public class Account {
         this.id = id;
     }
 
-    public Account(Long clientId, String accountNumber, String name) {
-        this.clientId = clientId;
+    public Account(Client client, String accountNumber, String name) {
+        this.client = client;
         this.accountNumber = accountNumber;
         this.name = name;
         this.openDate = new Date();
-    }
-
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
     }
 
     public String getAccountNumber() {
@@ -76,7 +64,16 @@ public class Account {
         this.openDate = openDate;
     }
 
-//    public Collection<Document> getDocs() {
+    @ManyToOne(targetEntity=Client.class,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Client getClient() {
+        return client;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
+    //    public Collection<Document> getDocs() {
 //        return docs;
 //    }
 }
