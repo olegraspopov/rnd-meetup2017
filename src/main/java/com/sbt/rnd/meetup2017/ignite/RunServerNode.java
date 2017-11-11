@@ -1,4 +1,4 @@
-package ignite;
+package com.sbt.rnd.meetup2017.ignite;
 
 
 import org.apache.ignite.Ignite;

@@ -1,6 +1,9 @@
-package data.ogm;
+package com.sbt.rnd.meetup2017.data.ogm;
+
+import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
@@ -12,8 +15,10 @@ public class Account {
     private String name;
     private Date openDate;
     private Date closeDate;
-    @OneToMany(targetEntity=Document.class)
+
     private Collection<Document> docs;
+    private BigDecimal balance;
+    private Currency currency;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -30,6 +35,7 @@ public class Account {
         this.accountNumber = accountNumber;
         this.name = name;
         this.openDate = new Date();
+
     }
 
     public String getAccountNumber() {
@@ -73,7 +79,28 @@ public class Account {
         this.client = client;
     }
 
-    //    public Collection<Document> getDocs() {
-//        return docs;
-//    }
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void setBalance(BigDecimal balance) {
+        this.balance = balance;
+    }
+    @ManyToOne(targetEntity=Currency.class,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    public Currency getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
+    @OneToMany(targetEntity=Document.class)
+    public Collection<Document> getDocs() {
+        return docs;
+    }
+
+    public void setDocs(Collection<Document> docs) {
+        this.docs = docs;
+    }
 }

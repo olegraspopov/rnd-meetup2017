@@ -1,4 +1,4 @@
-package data;
+package com.sbt.rnd.meetup2017.data;
 
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
 

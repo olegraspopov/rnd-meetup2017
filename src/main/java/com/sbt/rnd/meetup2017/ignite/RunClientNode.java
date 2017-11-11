@@ -1,6 +1,6 @@
-package ignite;
+package com.sbt.rnd.meetup2017.ignite;
 
-import data.Client;
+import com.sbt.rnd.meetup2017.data.Client;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.Ignition;
@@ -14,7 +14,7 @@ public class RunClientNode {
             try(IgniteCache<Long, Client> clientIgniteCache = ignite.getOrCreateCache(CacheConfig.cacheConfiguration())){
                 Client client = new Client("Ivan", "616123456789");
                 clientIgniteCache.put(client.getId(), client);
-                System.out.println("get data.Client "+clientIgniteCache.get(client.getId()));
+                System.out.println("get Client "+clientIgniteCache.get(client.getId()));
             }
         }
     }

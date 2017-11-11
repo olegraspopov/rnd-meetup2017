@@ -1,9 +1,6 @@
-package data.ogm;
+package com.sbt.rnd.meetup2017.data.ogm;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
@@ -44,5 +41,14 @@ public class Client {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @OneToMany(targetEntity=Address.class)
+    public Collection<Address> getAddresses() {
+        return addresses;
+    }
+
+    public void setAddresses(Collection<Address> addresses) {
+        this.addresses = addresses;
     }
 }
