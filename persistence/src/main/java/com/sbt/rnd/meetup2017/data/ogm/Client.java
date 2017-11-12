@@ -46,7 +46,7 @@ public class Client {
         this.name = name;
     }
 
-    @OneToMany(targetEntity=Address.class)
+    @ElementCollection
     public Collection<Address> getAddresses() {
         return addresses;
     }
