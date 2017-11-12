@@ -17,6 +17,9 @@ public class Client {
         this.inn = inn;
     }
 
+    public Client() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long getId() {
@@ -43,7 +46,7 @@ public class Client {
         this.name = name;
     }
 
-    @OneToMany(targetEntity=Address.class)
+    @ElementCollection
     public Collection<Address> getAddresses() {
         return addresses;
     }

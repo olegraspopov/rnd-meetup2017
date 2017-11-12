@@ -8,6 +8,8 @@ import java.util.Collection;
 public interface ClientApi {
 
     Client create(String name, String inn, Collection<Address> addresses);
-    boolean edit(Client client);
+
+    boolean update(Client client);
+
     boolean delete(Long clientId);
 }

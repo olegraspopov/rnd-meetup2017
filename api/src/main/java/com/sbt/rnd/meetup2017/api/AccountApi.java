@@ -8,7 +8,9 @@ import java.util.Collection;
 
 public interface AccountApi {
 
-    Account create(Client client,String accountNumber,String name,Currency currency);
+    Account create(Client client, String accountNumber, String name, Currency currency);
+
     boolean edit(Account account);
+
     boolean delete(Long accId);
 }
