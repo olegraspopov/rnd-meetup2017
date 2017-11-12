@@ -39,7 +39,7 @@ public class AccountApiImpl implements AccountApi {
     public boolean delete(Long accId) {
         Account account= dao.find(Account.class, accId);
         if (account!=null)
-            return dao.remove(accId);
+            return dao.remove(account);
         return false;
     }
 }

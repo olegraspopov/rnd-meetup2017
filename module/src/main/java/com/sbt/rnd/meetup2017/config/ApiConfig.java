@@ -1,6 +1,8 @@
 package com.sbt.rnd.meetup2017.config;
 
+import com.sbt.rnd.meetup2017.api.AccountApi;
 import com.sbt.rnd.meetup2017.api.ClientApi;
+import com.sbt.rnd.meetup2017.api.impl.AccountApiImpl;
 import com.sbt.rnd.meetup2017.api.impl.ClientApiImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,5 +17,10 @@ public class ApiConfig {
     @Bean
     ClientApi clientApi(){
         return new ClientApiImpl();
+    }
+
+    @Bean
+    AccountApi accountApi(){
+        return new AccountApiImpl();
     }
 }

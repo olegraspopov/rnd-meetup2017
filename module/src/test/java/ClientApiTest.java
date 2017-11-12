@@ -1,4 +1,5 @@
 import com.sbt.rnd.meetup2017.api.ClientApi;
+import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
 import org.hibernate.ogm.jpa.impl.OgmEntityManager;
 import org.junit.Test;
@@ -19,7 +20,7 @@ import static org.junit.Assert.assertThat;
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ClientApiTest {
     @Autowired
-    private EntityManager em;
+    private IDao dao;
 
     @Autowired
     private ClientApi clientApi;
@@ -30,7 +31,7 @@ public class ClientApiTest {
         String name = "Пупкин";
         String inn = "09999991110";
         Client client = clientApi.create(name, inn, null);
-
+        assertThat(client, is(notNullValue(Client.class)));
         assertThat(client.getId(), is(notNullValue(Long.class)));
         assertThat(client.getName(), is(name));
         assertThat(client.getInn(), is(inn));
@@ -44,7 +45,7 @@ public class ClientApiTest {
         Client client=clientApi.create("Пупкин", inn, null);
         /*запросы похоже не работают :(
         List<Client> clientList =  em.createQuery("select inn from Client").getResultList();*/
-        client = em.find(Client.class, client.getId());
+        client = dao.find(Client.class, client.getId());
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         assertThat(id, is(notNullValue(Long.class)));
@@ -54,7 +55,7 @@ public class ClientApiTest {
         client.setInn(inn);
 
         clientApi.update(client);
-        client = em.find(Client.class, id);
+        client = dao.find(Client.class, id);
         assertThat(client.getInn(), is(inn));
 
     }
@@ -63,11 +64,10 @@ public class ClientApiTest {
     public void testDelete() throws Exception {
 
         Client client=clientApi.create("Пупкин", "12312312", null);
-        client = em.find(Client.class, client.getId());
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         clientApi.delete(id);
-        client = em.find(Client.class, id);
+        client = dao.find(Client.class, id);
         assertThat(client, is(nullValue(Client.class)));
 
     }
