@@ -17,6 +17,9 @@ public class Client {
         this.inn = inn;
     }
 
+    public Client() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long getId() {

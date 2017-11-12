@@ -15,6 +15,11 @@
         <module>module</module>
     </modules>
 
+    <properties>
+        <spring.version>4.2.0.RELEASE</spring.version>
+        <aspectj.version>1.7.3</aspectj.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -76,10 +81,45 @@
                 <artifactId>junit</artifactId>
                 <version>RELEASE</version>
             </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.aspectj</groupId>
+                <artifactId>aspectjrt</artifactId>
+                <version>${aspectj.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aspects</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.sbt.rnd</groupId>
                 <artifactId>persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sbt.rnd</groupId>
+                <artifactId>api</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
@@ -98,7 +138,6 @@
             </plugin>
         </plugins>
     </build>
-
 
 
 </project>

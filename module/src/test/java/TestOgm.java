@@ -1,3 +1,4 @@
+import com.sbt.rnd.meetup2017.api.ClientApi;
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Address;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
@@ -9,6 +10,10 @@ import org.apache.ignite.Ignite;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -26,10 +31,14 @@ import java.util.Date;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
 
+@ContextConfiguration(locations = "classpath:spring-beans.xml")
+@RunWith(SpringJUnit4ClassRunner.class)
 public class TestOgm {
+    @Autowired
     private EntityManager em;
 
-    private Ignite ignite;
+    @Autowired
+    private ClientApi clientApi;
 
     public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
@@ -53,16 +62,16 @@ public class TestOgm {
         em.close();
     }
 
-    @Before
+   /* @Before
     public void setUp() throws Exception {
         EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
         em = emf.createEntityManager();
-    }
+    }*/
 
-    @After
+   /* @After
     public void tearDown() throws Exception {
         em.close();
-    }
+    }*/
 
     @Test
     public void testAccountPersistAndRead() throws Exception {
@@ -112,17 +121,18 @@ public class TestOgm {
 
     @Test
     public void testClientPersistAndRead() throws Exception {
-        Client client = new Client("Пупкин", "09999991110");
-        assertThat(client.getId(), is(nullValue(Long.class)));
+        //Client client = new Client("Пупкин", "09999991110");
+        Client client = clientApi.create("Пупкин", "09999991110",null);
+        //assertThat(client.getId(), is(nullValue(Long.class)));
 
-        em.getTransaction().begin();
-        assertThat(client.getId(), is(nullValue(Long.class)));
+        //em.getTransaction().begin();
+        //assertThat(client.getId(), is(nullValue(Long.class)));
 
-        em.persist(client);
+        //em.persist(client);
         assertThat(client.getId(), is(notNullValue(Long.class)));
 
         Long id = client.getId();
-        em.getTransaction().commit();
+        //em.getTransaction().commit();
         assertThat(client.getId(), is(id));
 
         Client clientRead = em.find(Client.class, id);
