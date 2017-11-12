@@ -1,8 +1,13 @@
 package com.sbt.rnd.meetup2017.data.ogm.breed_n_dog;
 
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
+
 import javax.persistence.*;
 
 @Entity
+@Indexed
 public class Dog {
     @Id
     @GeneratedValue(strategy = GenerationType.TABLE, generator = "dog")
@@ -23,6 +28,7 @@ public class Dog {
 
     private Long id;
 
+    @Field(analyze= Analyze.YES)
     public String getName() {
         return name;
     }

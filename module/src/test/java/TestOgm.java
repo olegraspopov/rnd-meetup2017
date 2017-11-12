@@ -7,6 +7,11 @@ import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
 import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Dog;
 import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.apache.ignite.Ignite;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -54,10 +60,26 @@ public class TestOgm {
         em.persist(dina);
         em.getTransaction().commit();
 
-        //get ID dina
-        Long dinaId = dina.getId();
+        FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+
+//Optionally use the QueryBuilder to simplify Query definition:
+        QueryBuilder b = ftem.getSearchFactory()
+                .buildQueryBuilder()
+                .forEntity(Dog.class)
+                .get();
+
+//Create a Lucene Query:
+        Query lq = b.keyword().onField("name").matching("dina").createQuery();
+
+//Transform the Lucene Query in a JPA Query:
+        FullTextQuery ftQuery = ftem.createFullTextQuery(lq, Dog.class);
+
+//List all matching Hypothesis:
+        List<Dog> resultList = ftQuery.getResultList();
+
+
         // query
-        Dog ourDina = em.find(Dog.class, dinaId);
+        Dog ourDina = resultList.get(0);
         System.out.println("Dina:" + ourDina);
         em.close();
     }
