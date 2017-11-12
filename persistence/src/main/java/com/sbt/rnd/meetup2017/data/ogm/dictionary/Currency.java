@@ -10,6 +10,9 @@ public class Currency {
 
     private Long id;
 
+    public Currency() {
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     public Long getId() {

@@ -1,11 +1,6 @@
 import com.sbt.rnd.meetup2017.api.ClientApi;
-import com.sbt.rnd.meetup2017.data.ogm.Account;
-import com.sbt.rnd.meetup2017.data.ogm.Address;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.data.ogm.Document;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Dog;
-import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
+import org.hibernate.ogm.jpa.impl.OgmEntityManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +8,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.transaction.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
+import java.util.List;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.junit.Assert.assertThat;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
@@ -36,9 +27,9 @@ public class ClientApiTest {
     @Test
     public void testCreate() throws Exception {
 
-        String name= "Пупкин";
-        String inn="09999991110";
-        Client client = clientApi.create(name, inn,null);
+        String name = "Пупкин";
+        String inn = "09999991110";
+        Client client = clientApi.create(name, inn, null);
 
         assertThat(client.getId(), is(notNullValue(Long.class)));
         assertThat(client.getName(), is(name));
@@ -49,18 +40,35 @@ public class ClientApiTest {
     @Test
     public void testUpdate() throws Exception {
 
-
-        String inn="09999991110";
-       /* Client client =  em.find(Client.class, inn);
-        Long id=client.getId();
+        String inn = "09999991110";
+        Client client=clientApi.create("Пупкин", inn, null);
+        /*запросы похоже не работают :(
+        List<Client> clientList =  em.createQuery("select inn from Client").getResultList();*/
+        client = em.find(Client.class, client.getId());
+        assertThat(client, is(notNullValue(Client.class)));
+        Long id = client.getId();
         assertThat(id, is(notNullValue(Long.class)));
         assertThat(client.getInn(), is(inn));
         client.setName("Иванов");
-        client.setInn("123456");
+        inn = "123456";
+        client.setInn(inn);
 
         clientApi.update(client);
-        client =  em.find(Client.class, id);*/
+        client = em.find(Client.class, id);
+        assertThat(client.getInn(), is(inn));
 
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+
+        Client client=clientApi.create("Пупкин", "12312312", null);
+        client = em.find(Client.class, client.getId());
+        assertThat(client, is(notNullValue(Client.class)));
+        Long id = client.getId();
+        clientApi.delete(id);
+        client = em.find(Client.class, id);
+        assertThat(client, is(nullValue(Client.class)));
 
     }
 }

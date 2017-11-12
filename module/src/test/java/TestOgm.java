@@ -99,6 +99,26 @@ public class TestOgm {
         assertThat(accountRead.getId(), is(id));
     }
 
+    /*@Test
+    public void testAddressPersistAndRead() throws Exception {
+        Address address = new Address("ул. Ленина", 344000);
+        assertThat(address.getId(), is(nullValue(Long.class)));
+
+        em.getTransaction().begin();
+        assertThat(address.getId(), is(nullValue(Long.class)));
+
+        em.persist(address);
+        assertThat(address.getId(), is(notNullValue(Long.class)));
+
+        Long id = address.getId();
+        em.getTransaction().commit();
+        assertThat(address.getId(), is(id));
+
+        Address addressRead = em.find(Address.class, id);
+        assertThat(addressRead, is(notNullValue(Address.class)));
+        assertThat(addressRead.getId(), is(id));
+    }*/
+
     @Test
     public void testClientPersistAndRead() throws Exception {
         //Client client = new Client("Пупкин", "09999991110");
