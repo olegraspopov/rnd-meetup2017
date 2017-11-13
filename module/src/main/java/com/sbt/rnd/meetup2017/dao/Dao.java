@@ -74,7 +74,7 @@ public class Dao implements IDao {
         });
     }
 
-    public <T> T find(Class<T> entityClass,Long id) {
+    public <T> T findById(Class<T> entityClass, Long id) {
         return em.find(entityClass, id);
     }
 

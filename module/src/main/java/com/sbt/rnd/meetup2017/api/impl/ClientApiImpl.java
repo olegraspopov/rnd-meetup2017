@@ -2,13 +2,12 @@ package com.sbt.rnd.meetup2017.api.impl;
 
 import com.sbt.rnd.meetup2017.api.ClientApi;
 import com.sbt.rnd.meetup2017.dao.IDao;
-import com.sbt.rnd.meetup2017.dao.IExecutor;
 import com.sbt.rnd.meetup2017.data.ogm.Address;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
 import java.util.Collection;
+import java.util.List;
 
 public class ClientApiImpl implements ClientApi {
 
@@ -35,9 +34,14 @@ public class ClientApiImpl implements ClientApi {
 
     @Override
     public boolean delete(Long clientId) {
-        Client client = dao.find(Client.class, clientId);
+        Client client = dao.findById(Client.class, clientId);
         if (client!=null)
             return dao.remove(client);
         return false;
+    }
+
+    @Override
+    public List<Client> getClientByInn(String inn) {
+        return null;
     }
 }
