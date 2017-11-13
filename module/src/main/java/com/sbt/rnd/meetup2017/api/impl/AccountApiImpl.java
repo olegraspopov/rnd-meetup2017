@@ -1,12 +1,14 @@
 package com.sbt.rnd.meetup2017.api.impl;
 
 import com.sbt.rnd.meetup2017.api.AccountApi;
+import com.sbt.rnd.meetup2017.api.ClientApi;
 import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
 import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 
 public class AccountApiImpl implements AccountApi {
@@ -14,11 +16,15 @@ public class AccountApiImpl implements AccountApi {
     @Autowired
     private IDao dao;
 
+    @Autowired
+    ClientApi clientApi;
+
+    @Autowired
+    private EntityManager em;
+
     @Override
     public Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode) {
-        Client client=dao.findById(Client.class,clientId);
-        if (client==null)
-            throw new RuntimeException("Клиент с id="+clientId+" не найден в системе");
+        Client client=clientApi.getClientById(clientId);
         Account account = new Account(client, accountNumber,name);
         if (currencyIntCode!=null) {
            List<Currency> currencyList=dao.search("select c from Currency c where c.intCode="+currencyIntCode);
@@ -58,6 +64,19 @@ public class AccountApiImpl implements AccountApi {
 
     @Override
     public List<Account> getAccountsByClient(Long clientId) {
-        return null;
+        Client client=clientApi.getClientById(clientId);
+        em.createQuery("select a from Account a where a.client=:client").setParameter("client",client).getResultList();
+
+        return dao.search("select a from Account a where a.client="+client);
     }
+
+    @Override
+    public Account getAccountById(Long id) {
+        Account account=dao.findById(Account.class,id);
+        if (account==null)
+            throw new RuntimeException("Счет с id="+id+" не найден в системе");
+        return account;
+    }
+
+
 }

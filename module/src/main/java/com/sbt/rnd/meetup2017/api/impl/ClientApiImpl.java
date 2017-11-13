@@ -44,4 +44,13 @@ public class ClientApiImpl implements ClientApi {
     public List<Client> getClientByInn(String inn) {
         return null;
     }
+
+    @Override
+    public Client getClientById(Long id){
+        Client client=dao.findById(Client.class,id);
+        if (client==null)
+            throw new RuntimeException("Клиент с id="+id+" не найден в системе");
+        return client;
+
+    }
 }

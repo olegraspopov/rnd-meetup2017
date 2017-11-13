@@ -13,6 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
@@ -56,7 +57,7 @@ public class AccountApiTest {
         String accNumber = "40817810000000000001";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
 
-        account = dao.findById(Account.class, account.getId());
+        account = accountApi.getAccountById(account.getId());
         assertThat(account, is(notNullValue(Account.class)));
         Long id = account.getId();
         assertThat(id, is(notNullValue(Long.class)));
@@ -84,6 +85,17 @@ public class AccountApiTest {
         accountApi.delete(id);
         account = dao.findById(Account.class, id);
         assertThat(account, is(nullValue(Account.class)));
+
+    }
+
+    @Test
+    public void getAccountsByClient() throws Exception {
+        Client client = clientApi.create("Пупкин", "12312312", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accName = "Основной";
+        String accNumber = "40817810000000000001";
+        Account account = accountApi.create(client.getId(), accNumber, accName, null);
+        assertNotNull(accountApi.getAccountsByClient(client.getId()));
 
     }
 }

@@ -16,4 +16,6 @@ public interface ClientApi {
 
     List<Client> getClientByInn(String inn);
 
+    Client getClientById(Long id);
+
 }

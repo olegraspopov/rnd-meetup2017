@@ -43,10 +43,10 @@ public class ClientApiTest {
     public void testUpdate() throws Exception {
 
         String inn = "09999991110";
-        Client client=clientApi.create("Пупкин", inn, null);
+        Client client = clientApi.create("Пупкин", inn, null);
 
         //List<Client> clientList =  dao.search("select c from Client c");
-        client = dao.findById(Client.class, client.getId());
+        client = clientApi.getClientById(client.getId());
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         assertThat(id, is(notNullValue(Long.class)));
@@ -56,7 +56,7 @@ public class ClientApiTest {
         client.setInn(inn);
 
         clientApi.update(client);
-        client = dao.findById(Client.class, id);
+        client = clientApi.getClientById(id);
         assertThat(client.getInn(), is(inn));
 
     }
@@ -64,7 +64,7 @@ public class ClientApiTest {
     @Test
     public void testDelete() throws Exception {
 
-        Client client=clientApi.create("Пупкин", "12312312", null);
+        Client client = clientApi.create("Пупкин", "12312312", null);
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         clientApi.delete(id);
