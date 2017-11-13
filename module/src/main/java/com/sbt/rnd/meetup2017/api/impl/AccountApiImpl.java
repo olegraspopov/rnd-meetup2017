@@ -9,7 +9,9 @@ import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AccountApiImpl implements AccountApi {
 
@@ -18,9 +20,6 @@ public class AccountApiImpl implements AccountApi {
 
     @Autowired
     ClientApi clientApi;
-
-    @Autowired
-    private EntityManager em;
 
     @Override
     public Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode) {
@@ -64,10 +63,11 @@ public class AccountApiImpl implements AccountApi {
 
     @Override
     public List<Account> getAccountsByClient(Long clientId) {
-        Client client=clientApi.getClientById(clientId);
-        em.createQuery("select a from Account a where a.client=:client").setParameter("client",client).getResultList();
-
-        return dao.search("select a from Account a where a.client="+client);
+        //Client client=clientApi.getClientById(clientId);
+        //em.createQuery("select a from Account a where a.client=:client").setParameter("client",client).getResultList();
+        Map<String,Object> parameters=new HashMap<>();
+        parameters.put("clientId",clientId);
+        return dao.search("select a from Account a where a.clientId=:clientId",parameters);
     }
 
     @Override

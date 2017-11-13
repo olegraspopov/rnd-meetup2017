@@ -15,6 +15,7 @@ import java.math.BigDecimal;
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,8 +32,8 @@ public class AccountApiTest {
     @Test
     public void testCreate() throws Exception {
 
-        String name = "Пупкин";
-        String inn = "09999991110";
+        String name = "Борисов";
+        String inn = "1234567810";
         Client client = clientApi.create(name, inn, null);
         assertThat(client, is(notNullValue(Client.class)));
         Currency currency = new Currency("RUB", 810, "Российский рубль");
@@ -50,8 +51,8 @@ public class AccountApiTest {
     @Test
     public void testUpdate() throws Exception {
 
-        String inn = "09999991110";
-        Client client = clientApi.create("Пупкин", inn, null);
+        String inn = "1255567890";
+        Client client = clientApi.create("Николаев", inn, null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000001";
@@ -76,7 +77,7 @@ public class AccountApiTest {
     @Test
     public void testDelete() throws Exception {
 
-        Client client = clientApi.create("Пупкин", "12312312", null);
+        Client client = clientApi.create("Александров", "4534567890", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000001";
@@ -90,12 +91,12 @@ public class AccountApiTest {
 
     @Test
     public void getAccountsByClient() throws Exception {
-        Client client = clientApi.create("Пупкин", "12312312", null);
+        Client client = clientApi.create("Пупкин", "1236767890", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000001";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
-        assertNotNull(accountApi.getAccountsByClient(client.getId()));
+        assertTrue(accountApi.getAccountsByClient(client.getId()).size()>0);
 
     }
 }

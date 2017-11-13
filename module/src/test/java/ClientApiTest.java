@@ -21,16 +21,13 @@ public class ClientApiTest {
     private IDao dao;
 
     @Autowired
-    private EntityManager em;
-
-    @Autowired
     private ClientApi clientApi;
 
     @Test
     public void testCreate() throws Exception {
 
-        String name = "Пупкин";
-        String inn = "09999991110";
+        String name = "Владимиров";
+        String inn = "7234567890";
         Client client = clientApi.create(name, inn, null);
         assertThat(client, is(notNullValue(Client.class)));
         assertThat(client.getId(), is(notNullValue(Long.class)));
@@ -42,8 +39,8 @@ public class ClientApiTest {
     @Test
     public void testUpdate() throws Exception {
 
-        String inn = "09999991110";
-        Client client = clientApi.create("Пупкин", inn, null);
+        String inn = "8234567890";
+        Client client = clientApi.create("Васильев", inn, null);
 
         //List<Client> clientList =  dao.search("select c from Client c");
         client = clientApi.getClientById(client.getId());
@@ -64,7 +61,7 @@ public class ClientApiTest {
     @Test
     public void testDelete() throws Exception {
 
-        Client client = clientApi.create("Пупкин", "12312312", null);
+        Client client = clientApi.create("Дмитриев", "1234567891", null);
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         clientApi.delete(id);

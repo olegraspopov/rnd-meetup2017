@@ -1,11 +1,15 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
 import org.apache.ignite.cache.query.annotations.QuerySqlField;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
+@Indexed
 public class Client {
 
     private Long id;
@@ -33,6 +37,7 @@ public class Client {
         this.id = id;
     }
 
+    @Field(analyze = Analyze.YES)
     public String getName() {
         return name;
     }

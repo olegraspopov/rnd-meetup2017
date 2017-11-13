@@ -15,6 +15,7 @@ import java.util.Date;
 public class Account {
     private Long id;
     private Client client;
+    private Long clientId;
     private String accountNumber;
     private String name;
     private Date openDate;
@@ -36,6 +37,7 @@ public class Account {
 
     public Account(Client client, String accountNumber, String name) {
         this.client = client;
+        this.clientId=client.getId();
         this.accountNumber = accountNumber;
         this.name = name;
         this.openDate = new Date();
@@ -108,5 +110,13 @@ public class Account {
 
     public void setDocs(Collection<Document> docs) {
         this.docs = docs;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
     }
 }

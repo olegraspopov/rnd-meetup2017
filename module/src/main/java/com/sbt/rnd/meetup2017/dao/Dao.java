@@ -6,31 +6,47 @@ import org.apache.lucene.search.Query;
 import org.hibernate.search.jpa.FullTextEntityManager;
 import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
-import org.hibernate.search.query.dsl.QueryBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import java.util.List;
+import java.util.Map;
 
 public class Dao implements IDao {
-    @Autowired
-    private EntityManager em;
+
+    private EntityManager entityManager;
+
+    private FullTextEntityManager fullTextEntityManager;
 
     private static final Logger LOGGER = LogManager.getLogger(Dao.class.getName());
 
+    public Dao(EntityManager entityManager) {
+        this.entityManager = entityManager;
+        this.fullTextEntityManager = Search.getFullTextEntityManager(entityManager);
+
+    }
+
+    @Override
+    public FullTextEntityManager getFullTextEntityManager() {
+        return fullTextEntityManager;
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     public <T> T execute(IExecutor<T> executor) {
-        boolean inTransaction = em.getTransaction().isActive();
-        int txId = em.getTransaction().hashCode();
+        boolean inTransaction = entityManager.getTransaction().isActive();
+        int txId = entityManager.getTransaction().hashCode();
         try {
             if (!inTransaction) {
-                em.getTransaction().begin();
+                entityManager.getTransaction().begin();
                 LOGGER.trace("Tx start {}, {}, thread = {}:{}",
                         txId, executor.getClass().getName(), Thread.currentThread().getId(), Thread.currentThread().getName());
             }
-            T res = executor.execute(em);
+            T res = executor.execute(entityManager);
 
             if (!inTransaction) {
-                em.getTransaction().commit();
+                entityManager.getTransaction().commit();
                 LOGGER.trace("Tx commit {}, {}, thread = {}:{}",
                         txId, executor.getClass().getName(), Thread.currentThread().getId(), Thread.currentThread().getName());
             }
@@ -41,7 +57,7 @@ public class Dao implements IDao {
             try {
 
                 if (!inTransaction) {
-                    em.getTransaction().rollback();
+                    entityManager.getTransaction().rollback();
                 }
 
             } catch (Exception e) {
@@ -75,27 +91,31 @@ public class Dao implements IDao {
     }
 
     public <T> T findById(Class<T> entityClass, Long id) {
-        return em.find(entityClass, id);
+        return entityManager.find(entityClass, id);
     }
 
-    public <T> List<T> search(String query){
-        return em.createQuery(query).getResultList();
+    public <T> List<T> search(String query) {
+
+        return search(query, null);
     }
 
-    public <T> List<T> fullTextSearch(Class<T> entityClass, Query query){
-        FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+    public <T> List<T> search(String query, Map<String, Object> parameters) {
+        javax.persistence.Query q = entityManager.createQuery(query);
+        if (parameters != null && parameters.size() > 0)
+            for (Map.Entry<String, Object> entry : parameters.entrySet())
+                q.setParameter(entry.getKey(), entry.getValue());
+        return q.getResultList();
+    }
+
+    public <T> List<T> fullTextSearch(Class<T> entityClass, Query query) {
 
         //Optionally use the QueryBuilder to simplify Query definition:
-        QueryBuilder b = ftem.getSearchFactory()
-                .buildQueryBuilder()
-                .forEntity(entityClass)
-                .get();
 
         //Create a Lucene Query:
         //Query lq = b.keyword().onField("name").matching("dina").createQuery();
 
         //Transform the Lucene Query in a JPA Query:
-        FullTextQuery ftQuery = ftem.createFullTextQuery(query, entityClass);
+        FullTextQuery ftQuery = fullTextEntityManager.createFullTextQuery(query, entityClass);
 
         //List all matching Hypothesis:
         return ftQuery.getResultList();
