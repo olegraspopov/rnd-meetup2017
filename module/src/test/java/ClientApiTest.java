@@ -23,6 +23,9 @@ public class ClientApiTest {
     private IDao dao;
 
     @Autowired
+    private EntityManager em;
+
+    @Autowired
     private ClientApi clientApi;
 
     @Test
@@ -43,8 +46,8 @@ public class ClientApiTest {
 
         String inn = "09999991110";
         Client client=clientApi.create("Пупкин", inn, null);
-        /*запросы похоже не работают :(
-        List<Client> clientList =  em.createQuery("select inn from Client").getResultList();*/
+
+        List<Client> clientList =  dao.search("select c from Client c");
         client = dao.find(Client.class, client.getId());
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();

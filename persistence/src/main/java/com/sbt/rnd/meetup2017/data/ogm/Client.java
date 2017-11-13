@@ -1,5 +1,7 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
+import org.apache.ignite.cache.query.annotations.QuerySqlField;
+
 import javax.persistence.*;
 import java.util.Collection;
 
@@ -8,6 +10,7 @@ public class Client {
 
     private Long id;
     private String name;
+    @QuerySqlField(index = true)
     private String inn;
 
     private Collection<Address> addresses;

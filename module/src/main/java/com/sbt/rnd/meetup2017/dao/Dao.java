@@ -2,9 +2,15 @@ package com.sbt.rnd.meetup2017.dao;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
+import java.util.List;
 
 public class Dao implements IDao {
     @Autowired
@@ -70,5 +76,28 @@ public class Dao implements IDao {
 
     public <T> T find(Class<T> entityClass,Long id) {
         return em.find(entityClass, id);
+    }
+
+    public <T> List<T> search(String query){
+        return em.createQuery(query).getResultList();
+    }
+
+    public <T> List<T> fullTextSearch(Class<T> entityClass, Query query){
+        FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
+
+        //Optionally use the QueryBuilder to simplify Query definition:
+        QueryBuilder b = ftem.getSearchFactory()
+                .buildQueryBuilder()
+                .forEntity(entityClass)
+                .get();
+
+        //Create a Lucene Query:
+        //Query lq = b.keyword().onField("name").matching("dina").createQuery();
+
+        //Transform the Lucene Query in a JPA Query:
+        FullTextQuery ftQuery = ftem.createFullTextQuery(query, entityClass);
+
+        //List all matching Hypothesis:
+        return ftQuery.getResultList();
     }
 }
