@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import javax.persistence.EntityManager;
-
 import java.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.*;
@@ -37,9 +35,10 @@ public class AccountApiTest {
         Client client = clientApi.create(name, inn, null);
         assertThat(client, is(notNullValue(Client.class)));
         Currency currency = new Currency("RUB", 810, "Российский рубль");
+        dao.save(currency);
         String accName = "Основной";
         String accNumber = "40817810000000000001";
-        Account account = accountApi.create(client, accNumber, accName, currency);
+        Account account = accountApi.create(client.getId(), accNumber, accName, currency.getIntCode());
         assertThat(account, is(notNullValue(Account.class)));
         assertThat(account.getId(), is(notNullValue(Long.class)));
         assertThat(account.getName(), is(accName));
@@ -55,9 +54,9 @@ public class AccountApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000001";
-        Account account = accountApi.create(client, accNumber, accName, null);
+        Account account = accountApi.create(client.getId(), accNumber, accName, null);
 
-        account = dao.find(Account.class, account.getId());
+        account = dao.findById(Account.class, account.getId());
         assertThat(account, is(notNullValue(Account.class)));
         Long id = account.getId();
         assertThat(id, is(notNullValue(Long.class)));
@@ -67,7 +66,7 @@ public class AccountApiTest {
         account.setAccountNumber(accNumber);
         account.setBalance(BigDecimal.valueOf(100));
         accountApi.update(account);
-        account = dao.find(Account.class, id);
+        account = dao.findById(Account.class, id);
         assertThat(account.getAccountNumber(), is(accNumber));
         assertThat(account.getBalance(), is(BigDecimal.valueOf(100)));
 
@@ -80,10 +79,10 @@ public class AccountApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000001";
-        Account account = accountApi.create(client, accNumber, accName, null);
+        Account account = accountApi.create(client.getId(), accNumber, accName, null);
         Long id = account.getId();
         accountApi.delete(id);
-        account = dao.find(Account.class, id);
+        account = dao.findById(Account.class, id);
         assertThat(account, is(nullValue(Account.class)));
 
     }

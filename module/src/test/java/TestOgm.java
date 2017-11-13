@@ -122,7 +122,7 @@ public class TestOgm {
         em.getTransaction().commit();
         assertThat(address.getId(), is(id));
 
-        Address addressRead = em.find(Address.class, id);
+        Address addressRead = em.findById(Address.class, id);
         assertThat(addressRead, is(notNullValue(Address.class)));
         assertThat(addressRead.getId(), is(id));
     }*/

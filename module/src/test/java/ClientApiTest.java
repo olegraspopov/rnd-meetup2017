@@ -1,7 +1,6 @@
 import com.sbt.rnd.meetup2017.api.ClientApi;
 import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
-import org.hibernate.ogm.jpa.impl.OgmEntityManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +8,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
-import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -47,8 +45,8 @@ public class ClientApiTest {
         String inn = "09999991110";
         Client client=clientApi.create("Пупкин", inn, null);
 
-        List<Client> clientList =  dao.search("select c from Client c");
-        client = dao.find(Client.class, client.getId());
+        //List<Client> clientList =  dao.search("select c from Client c");
+        client = dao.findById(Client.class, client.getId());
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         assertThat(id, is(notNullValue(Long.class)));
@@ -58,7 +56,7 @@ public class ClientApiTest {
         client.setInn(inn);
 
         clientApi.update(client);
-        client = dao.find(Client.class, id);
+        client = dao.findById(Client.class, id);
         assertThat(client.getInn(), is(inn));
 
     }
@@ -70,7 +68,7 @@ public class ClientApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         Long id = client.getId();
         clientApi.delete(id);
-        client = dao.find(Client.class, id);
+        client = dao.findById(Client.class, id);
         assertThat(client, is(nullValue(Client.class)));
 
     }

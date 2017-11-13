@@ -12,7 +12,7 @@ public interface IDao {
 
     <T> Boolean remove(T entity);
 
-    <T> T find(Class<T> entityClass,Long id);
+    <T> T findById(Class<T> entityClass, Long id);
 
     <T> List<T> search(String query);
 

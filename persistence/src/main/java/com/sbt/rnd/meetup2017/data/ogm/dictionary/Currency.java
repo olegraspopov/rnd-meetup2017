@@ -24,7 +24,7 @@ public class Currency {
     }
 
     private String code;
-    private int intCode;
+    private Integer intCode;
     private String name;
 
     public Currency(String code, int intCode, String name) {
@@ -41,11 +41,11 @@ public class Currency {
         this.code = code;
     }
 
-    public int getIntCode() {
+    public Integer getIntCode() {
         return intCode;
     }
 
-    public void setIntCode(int intCode) {
+    public void setIntCode(Integer intCode) {
         this.intCode = intCode;
     }
 
