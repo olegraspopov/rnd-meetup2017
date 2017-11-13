@@ -60,22 +60,8 @@ public class TestOgm {
         em.persist(dina);
         em.getTransaction().commit();
 
-        FullTextEntityManager ftem = Search.getFullTextEntityManager(em);
-
-//Optionally use the QueryBuilder to simplify Query definition:
-        QueryBuilder b = ftem.getSearchFactory()
-                .buildQueryBuilder()
-                .forEntity(Dog.class)
-                .get();
-
-//Create a Lucene Query:
-        Query lq = b.keyword().onField("name").matching("dina").createQuery();
-
-//Transform the Lucene Query in a JPA Query:
-        FullTextQuery ftQuery = ftem.createFullTextQuery(lq, Dog.class);
-
-//List all matching Hypothesis:
-        List<Dog> resultList = ftQuery.getResultList();
+        List<Dog> resultList =  em.createQuery( "SELECT m FROM Dog m WHERE m.name = 'dina'", Dog.class )
+                .getResultList();
 
 
         // query
