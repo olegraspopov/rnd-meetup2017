@@ -13,6 +13,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AccountApiImpl implements AccountApi {
 
@@ -25,18 +29,36 @@ public class AccountApiImpl implements AccountApi {
     @Autowired
     CurrencyUtils currencyUtils;
 
+    private static ConcurrentMap<String, ReentrantLock> lockCurator = new ConcurrentHashMap<>();
+
     @Override
     public Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode) {
-        Client client = clientApi.getClientById(clientId);
-        Account account = new Account(client, accountNumber, name);
-        if (currencyIntCode != null) {
-            account.setCurrency(currencyUtils.getByIntCode(currencyIntCode));
-        } else
-            account.setCurrency(currencyUtils.getDefault());
 
-        dao.save(account);
+        if (!lockCurator.containsKey(accountNumber)) {
+            lockCurator.putIfAbsent(accountNumber, new ReentrantLock());
+        }
+        Lock lock = lockCurator.get(accountNumber);
+        lock.lock();
+        try {
 
-        return account;
+            Account account = getAccountByNumber(accountNumber);
+            if (account != null)
+                throw new RuntimeException("Счет с номером=" + accountNumber + "  уже зарегистрирован в системе");
+
+            Client client = clientApi.getClientById(clientId);
+            account = new Account(client, accountNumber, name);
+            if (currencyIntCode != null) {
+                account.setCurrency(currencyUtils.getByIntCode(currencyIntCode));
+            } else
+                account.setCurrency(currencyUtils.getDefault());
+
+            dao.save(account);
+            return account;
+
+        } finally {
+            lock.unlock(); // снимаем блокировку
+        }
+
     }
 
     @Override
@@ -55,10 +77,7 @@ public class AccountApiImpl implements AccountApi {
     }
 
     @Override
-    public boolean reserveAccount(Long clientId, String accountNumber,Integer currencyIntCode) {
-        Account account = getAccountByNumber(accountNumber);
-        if (account != null)
-            throw new RuntimeException("Счет с номером=" + accountNumber + "  уже зарезервирован");
+    public boolean reserveAccount(Long clientId, String accountNumber, Integer currencyIntCode) {
 
         return create(clientId, accountNumber, "Резервирование счета для клиента id=" + clientId, currencyIntCode) != null;
     }
@@ -80,7 +99,7 @@ public class AccountApiImpl implements AccountApi {
     @Override
     public boolean accountIsOpen(Account account) {
 
-        return account.getState()>0;
+        return account.getState() > 0;
     }
 
     @Override
