@@ -46,41 +46,6 @@ public class TestOgm {
     @Autowired
     private ClientApi clientApi;
 
-    public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        Breed collie = new Breed();
-        collie.setName("breed-collie");
-        em.persist(collie);
-        Dog dina = new Dog();
-        dina.setName("dina");
-        dina.setBreed(collie);
-        //persist dina
-        em.persist(dina);
-        em.getTransaction().commit();
-
-        List<Dog> resultList =  em.createQuery( "SELECT m FROM Dog m WHERE m.name = 'dina'", Dog.class )
-                .getResultList();
-
-
-        // query
-        Dog ourDina = resultList.get(0);
-        System.out.println("Dina:" + ourDina);
-        em.close();
-    }
-
-   /* @Before
-    public void setUp() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
-        em = emf.createEntityManager();
-    }*/
-
-   /* @After
-    public void tearDown() throws Exception {
-        em.close();
-    }*/
-
     @Test
     public void testAccountPersistAndRead() throws Exception {
         Client client = new Client("Иванов", "1234567890");
