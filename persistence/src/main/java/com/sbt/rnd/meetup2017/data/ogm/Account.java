@@ -19,6 +19,7 @@ public class Account {
     private String accountNumber;
     private String name;
     private Date openDate;
+    private int state=0;
     private Date closeDate;
 
     private Collection<Document> docs;
@@ -118,5 +119,13 @@ public class Account {
 
     public void setClientId(Long clientId) {
         this.clientId = clientId;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 }

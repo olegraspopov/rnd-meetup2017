@@ -15,11 +15,15 @@ public interface AccountApi {
 
     boolean delete(Long accId);
 
-    boolean reserveAccount(Long clientId,String accountNumber);
+    boolean reserveAccount(Long clientId,String accountNumber,Integer currencyIntCode);
 
     boolean openAccount(String accountNumber);
 
     List<Account> getAccountsByClient(Long clientId);
 
     Account getAccountById(Long id);
+
+    Account getAccountByNumber(String accountNumber);
+
+    boolean accountIsOpen(Account account);
 }

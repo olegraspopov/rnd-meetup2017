@@ -12,7 +12,9 @@ import javax.persistence.EntityManager;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -67,6 +69,26 @@ public class ClientApiTest {
         clientApi.delete(id);
         client = dao.findById(Client.class, id);
         assertThat(client, is(nullValue(Client.class)));
+
+    }
+
+    @Test
+    public void testGetClientById() throws Exception {
+
+        Client client = clientApi.create("Георгиев", "1444567001", null);
+        assertThat(client, is(notNullValue(Client.class)));
+
+        assertNotNull(clientApi.getClientById(client.getId()));
+
+    }
+
+    @Test
+    public void testGetClientByInn() throws Exception {
+
+        Client client = clientApi.create("Тестов", "1234567001", null);
+        assertThat(client, is(notNullValue(Client.class)));
+
+        assertTrue(clientApi.getClientByInn("1234567001").size() > 0);
 
     }
 }

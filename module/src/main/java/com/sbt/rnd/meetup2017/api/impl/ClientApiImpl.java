@@ -7,7 +7,9 @@ import com.sbt.rnd.meetup2017.data.ogm.Client;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ClientApiImpl implements ClientApi {
 
@@ -42,7 +44,9 @@ public class ClientApiImpl implements ClientApi {
 
     @Override
     public List<Client> getClientByInn(String inn) {
-        return null;
+        Map<String,Object> parameters=new HashMap<>();
+        parameters.put("inn",inn);
+        return dao.search("select c from Client c where c.inn=:inn",parameters);
     }
 
     @Override

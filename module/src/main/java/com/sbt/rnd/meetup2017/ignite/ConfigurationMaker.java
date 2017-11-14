@@ -18,9 +18,9 @@ public class ConfigurationMaker implements IgniteConfigurationBuilder {
     private CacheConfiguration[] createCacheConfig() {
         List<CacheConfiguration<?, ?>> cacheConfig = new ArrayList<>();
 
-        cacheConfig.add(
+        /*cacheConfig.add(
                 createCacheConfig("Currency", CacheMode.REPLICATED).build()
-        );
+        );*/
 
         return cacheConfig.toArray(new CacheConfiguration[cacheConfig.size()]);
     }

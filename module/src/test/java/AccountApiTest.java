@@ -13,9 +13,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.math.BigDecimal;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,7 +34,7 @@ public class AccountApiTest {
         String inn = "1234567810";
         Client client = clientApi.create(name, inn, null);
         assertThat(client, is(notNullValue(Client.class)));
-        Currency currency = new Currency("RUB", 810, "Российский рубль");
+        Currency currency = new Currency("USD", 840, "Доллар");
         dao.save(currency);
         String accName = "Основной";
         String accNumber = "40817810000000000001";
@@ -96,7 +94,36 @@ public class AccountApiTest {
         String accName = "Основной";
         String accNumber = "40817810000000000001";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
-        assertTrue(accountApi.getAccountsByClient(client.getId()).size()>0);
+        assertTrue(accountApi.getAccountsByClient(client.getId()).size() > 0);
+
+    }
+
+    @Test
+    public void testReserve() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111111", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accNumber = "40817810000000000111";
+        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+
+        Account account = accountApi.getAccountByNumber(accNumber);
+        assertThat(account, is(notNullValue(Account.class)));
+        assertFalse(accountApi.accountIsOpen(account));
+
+    }
+
+    @Test
+    public void testOpen() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111111", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accNumber = "40817810000000000222";
+        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+
+        assertTrue(accountApi.openAccount(accNumber));
+        Account account = accountApi.getAccountByNumber(accNumber);
+        assertThat(account, is(notNullValue(Account.class)));
+        assertTrue(accountApi.accountIsOpen(account));
 
     }
 }
