@@ -33,6 +33,7 @@ public class ConfigurationMaker implements IgniteConfigurationBuilder {
                         .appendField("code", String.class)
                         .appendField("intCode", Integer.class)
                         .appendField("name", String.class)
+                        .appendField("default", Boolean.class)
                         .build()
         );
 
