@@ -11,11 +11,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -36,7 +36,7 @@ public class AccountApiTest {
         String inn = "1234567810";
         Client client = clientApi.create(name, inn, null);
         assertThat(client, is(notNullValue(Client.class)));
-        Currency currency = new Currency("RUB", 810, "Российский рубль");
+        Currency currency = new Currency("USD", 840, "Доллар");
         dao.save(currency);
         String accName = "Основной";
         String accNumber = "40817810000000000001";
@@ -55,7 +55,7 @@ public class AccountApiTest {
         Client client = clientApi.create("Николаев", inn, null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
-        String accNumber = "40817810000000000001";
+        String accNumber = "40817810000000000002";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
 
         account = accountApi.getAccountById(account.getId());
@@ -80,7 +80,7 @@ public class AccountApiTest {
         Client client = clientApi.create("Александров", "4534567890", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
-        String accNumber = "40817810000000000001";
+        String accNumber = "40817810000000000003";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
         Long id = account.getId();
         accountApi.delete(id);
@@ -94,9 +94,79 @@ public class AccountApiTest {
         Client client = clientApi.create("Пупкин", "1236767890", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
-        String accNumber = "40817810000000000001";
+        String accNumber = "40817810000000000004";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
-        assertTrue(accountApi.getAccountsByClient(client.getId()).size()>0);
+        assertTrue(accountApi.getAccountsByClient(client.getId()).size() > 0);
 
     }
+
+    @Test
+    public void testReserve() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111111", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accNumber = "40817810000000000111";
+        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+
+        Account account = accountApi.getAccountByNumber(accNumber);
+        assertThat(account, is(notNullValue(Account.class)));
+        assertFalse(accountApi.accountIsOpen(account));
+
+        try {
+            accountApi.reserveAccount(client.getId(), accNumber, null);
+        } catch (RuntimeException ex) {
+            assertEquals(ex.getMessage(), "Счет с номером=" + accNumber + "  уже зарегистрирован в системе");
+        }
+    }
+
+    @Test
+    public void testOpen() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111111", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accNumber = "40817810000000000222";
+        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+
+        assertTrue(accountApi.openAccount(accNumber));
+        Account account = accountApi.getAccountByNumber(accNumber);
+        assertThat(account, is(notNullValue(Account.class)));
+        assertTrue(accountApi.accountIsOpen(account));
+
+    }
+
+    @Test
+    public void testReserveSimultaneous() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111666", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        String accNumber = "40817810000000000666";
+        int n = 10;
+        Semaphore s = new Semaphore(1 - n);
+        Runnable runnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    accountApi.reserveAccount(client.getId(), accNumber, null);
+                } catch (RuntimeException ex) {
+                    assertEquals(ex.getMessage(), "Счет с номером=" + accNumber + "  уже зарегистрирован в системе");
+                } finally {
+                    s.release();
+                }
+            }
+        };
+
+        ArrayList<Thread> threadList = new ArrayList();
+        for (int i = 0; i < n; i++) {
+            threadList.add(new Thread(runnable));
+        }
+        for (Thread t : threadList) {
+            t.start();
+        }
+        s.acquire();
+        Account account = accountApi.getAccountByNumber(accNumber);
+        assertThat(account, is(notNullValue(Account.class)));
+        assertFalse(accountApi.accountIsOpen(account));
+
+    }
+
 }

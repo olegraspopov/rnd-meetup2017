@@ -9,9 +9,14 @@ import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AccountApiImpl implements AccountApi {
 
@@ -21,61 +26,110 @@ public class AccountApiImpl implements AccountApi {
     @Autowired
     ClientApi clientApi;
 
+    @Autowired
+    CurrencyUtils currencyUtils;
+
+    private static ConcurrentMap<String, ReentrantLock> lockCurator = new ConcurrentHashMap<>();
+
     @Override
     public Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode) {
-        Client client=clientApi.getClientById(clientId);
-        Account account = new Account(client, accountNumber,name);
-        if (currencyIntCode!=null) {
-           List<Currency> currencyList=dao.search("select c from Currency c where c.intCode="+currencyIntCode);
-           if (currencyList.size()==0)
-               throw new RuntimeException("Валюта с IntCode="+currencyIntCode+" не найдена в системе");
-           account.setCurrency(currencyList.get(0));
-        }
-        dao.save(account);
 
-        return account;
+        if (!lockCurator.containsKey(accountNumber)) {
+            lockCurator.putIfAbsent(accountNumber, new ReentrantLock());
+        }
+        Lock lock = lockCurator.get(accountNumber);
+        lock.lock();
+        try {
+
+            Account account = getAccountByNumber(accountNumber);
+            if (account != null)
+                throw new RuntimeException("Счет с номером=" + accountNumber + "  уже зарегистрирован в системе");
+
+            Client client = clientApi.getClientById(clientId);
+            account = new Account(client, accountNumber, name);
+            if (currencyIntCode != null) {
+                account.setCurrency(currencyUtils.getByIntCode(currencyIntCode));
+            } else
+                account.setCurrency(currencyUtils.getDefault());
+
+            dao.save(account);
+            return account;
+
+        } finally {
+            lock.unlock(); // снимаем блокировку
+        }
+
     }
 
     @Override
     public boolean update(Account account) {
-        if (account!=null)
+        if (account != null)
             return dao.save(account);
         return false;
     }
 
     @Override
     public boolean delete(Long accId) {
-        Account account= dao.findById(Account.class, accId);
-        if (account!=null)
+        Account account = dao.findById(Account.class, accId);
+        if (account != null)
             return dao.remove(account);
         return false;
     }
 
     @Override
-    public boolean reserveAccount(Long clientId, String accountNumber) {
-        return false;
+    public boolean reserveAccount(Long clientId, String accountNumber, Integer currencyIntCode) {
+
+        return create(clientId, accountNumber, "Резервирование счета для клиента id=" + clientId, currencyIntCode) != null;
     }
 
     @Override
     public boolean openAccount(String accountNumber) {
-        return false;
+        Account account = getAccountByNumber(accountNumber);
+        if (account == null)
+            throw new RuntimeException("Счет с номером=" + accountNumber + " не найден в системе");
+        if (accountIsOpen(account))
+            throw new RuntimeException("Счет с номером=" + accountNumber + " уже открыт");
+        account.setState(1);
+        account.setOpenDate(new Date());
+        Client client = account.getClient();
+        account.setName(client.getName() + ". ИНН " + client.getInn());
+        return true;
+    }
+
+    @Override
+    public boolean accountIsOpen(Account account) {
+
+        return account.getState() > 0;
     }
 
     @Override
     public List<Account> getAccountsByClient(Long clientId) {
         //Client client=clientApi.getClientById(clientId);
         //em.createQuery("select a from Account a where a.client=:client").setParameter("client",client).getResultList();
-        Map<String,Object> parameters=new HashMap<>();
-        parameters.put("clientId",clientId);
-        return dao.search("select a from Account a where a.clientId=:clientId",parameters);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("clientId", clientId);
+        return dao.search("select a from Account a where a.clientId=:clientId", parameters);
     }
 
     @Override
     public Account getAccountById(Long id) {
-        Account account=dao.findById(Account.class,id);
-        if (account==null)
-            throw new RuntimeException("Счет с id="+id+" не найден в системе");
+        Account account = dao.findById(Account.class, id);
+        if (account == null)
+            throw new RuntimeException("Счет с id=" + id + " не найден в системе");
         return account;
+    }
+
+    @Override
+    public Account getAccountByNumber(String accountNumber) {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("accountNumber", accountNumber);
+        List<Account> accountList = dao.search("select a from Account a where a.accountNumber=:accountNumber", parameters);
+        if (accountList.size() == 0)
+            //throw new RuntimeException("Счет с номером=" + accountNumber + " не найден в системе");
+            return null;
+        else if (accountList.size() > 1)
+            throw new RuntimeException("В системе найдено несколько счетов с номером=" + accountNumber);
+        return accountList.get(0);
     }
 
 

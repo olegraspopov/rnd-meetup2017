@@ -91,6 +91,8 @@ public class Dao implements IDao {
     }
 
     public <T> T findById(Class<T> entityClass, Long id) {
+        if (id==null)
+            throw new RuntimeException("Ошибка при чтении сущности "+entityClass+": id не может быть пустым.");
         return entityManager.find(entityClass, id);
     }
 
