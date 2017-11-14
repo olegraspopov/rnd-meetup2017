@@ -1,5 +1,7 @@
 package com.sbt.rnd.meetup2017.ignite;
 
+import com.sbt.rnd.meetup2017.data.ogm.Client;
+import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
 import org.apache.ignite.binary.BinaryObject;
 import org.apache.ignite.cache.*;
 import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
@@ -18,18 +20,41 @@ public class ConfigurationMaker implements IgniteConfigurationBuilder {
     private CacheConfiguration[] createCacheConfig() {
         List<CacheConfiguration<?, ?>> cacheConfig = new ArrayList<>();
 
-        cacheConfig.add(
-                createCacheConfig("Currency", CacheMode.REPLICATED).build()
-        );
+        addCacheConfigs(cacheConfig);
 
         return cacheConfig.toArray(new CacheConfiguration[cacheConfig.size()]);
     }
 
-    private TestCacheConfigBuilder createCacheConfig(String name, CacheMode cacheMode) {
+    public void addCacheConfigs(List<CacheConfiguration<?, ?>> config) {
+        config.add(
+                createCacheConfig("Currency", CacheMode.REPLICATED)
+                        .withKeyType(Long.class)
+                        .appendIndex("id", Long.class)
+                        .appendField("code", String.class)
+                        .appendField("intCode", Integer.class)
+                        .appendField("name", String.class)
+                        .build()
+        );
+
+        config.add(
+                createCacheConfig("Account", CacheMode.PARTITIONED)
+                        .withKeyType(Long.class)
+                        .appendIndex("id", Long.class)
+                        .appendField("client", Client.class)
+                        .appendField("clientId", Long.class)
+                        .appendField("accountNumber", String.class)
+                        .appendField("name", String.class)
+                        .appendField("openDate", Date.class)
+                        .appendField("closeDate", Date.class)
+                        .build()
+        );
+    }
+
+    public TestCacheConfigBuilder createCacheConfig(String name, CacheMode cacheMode) {
         return new TestCacheConfigBuilder(name, cacheMode);
     }
 
-    private class TestCacheConfigBuilder {
+    public class TestCacheConfigBuilder {
 
         private CacheConfiguration cacheConfig;
         private QueryEntity queryEntity;
