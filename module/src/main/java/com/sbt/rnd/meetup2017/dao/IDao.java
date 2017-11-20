@@ -17,6 +17,8 @@ public interface IDao {
 
     <T> Boolean save(T entity);
 
+    <T> Boolean save(T entity,Boolean lock);
+
     <T> Boolean remove(T entity);
 
     <T> T findById(Class<T> entityClass, Long id);

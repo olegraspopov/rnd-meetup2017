@@ -30,7 +30,7 @@ public class ClientApiImpl implements ClientApi {
     @Override
     public boolean update(Client client) {
         if (client!=null)
-            return dao.save(client);
+            return dao.save(client,true);
         return false;
     }
 

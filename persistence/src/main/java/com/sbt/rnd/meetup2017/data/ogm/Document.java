@@ -12,6 +12,9 @@ public class Document {
     private BigDecimal sumDoc;
     private Date dateDoc;
     private String aim;
+    private int state=0;
+    private Date dateWork;
+    private Integer version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -70,5 +73,30 @@ public class Document {
 
     public void setAim(String aim) {
         this.aim = aim;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    public Date getDateWork() {
+        return dateWork;
+    }
+
+    public void setDateWork(Date dateWork) {
+        this.dateWork = dateWork;
+    }
+
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

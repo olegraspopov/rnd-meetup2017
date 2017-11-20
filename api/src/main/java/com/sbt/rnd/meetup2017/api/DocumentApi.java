@@ -11,15 +11,15 @@ import java.util.List;
 
 public interface DocumentApi {
 
-    Document create(Long debetAccount, Long creditAccount, BigDecimal sumDoc, String aim, Long currencyId);
+    Document create(Long debetAccount, Long creditAccount, BigDecimal sumDoc, String aim);
 
-    boolean edit(Document document);
+    boolean update(Document document);
 
     boolean delete(Long docId);
 
     boolean workOut(Long docId, Date dateWork);
 
-    List<Document> getDocumentsByClient(Long clientId);
+    List<Document> getDocumentsByClient(Long clientId,DocumentFilter filter);
 
     Document getDocumentById(Long id);
 
