@@ -25,6 +25,7 @@ public class Account {
     private Collection<Document> docs;
     private BigDecimal balance;
     private Currency currency;
+    private Integer version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -127,5 +128,14 @@ public class Account {
 
     public void setState(int state) {
         this.state = state;
+    }
+
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

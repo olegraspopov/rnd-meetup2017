@@ -16,6 +16,7 @@ public class Client {
     private String name;
     @QuerySqlField(index = true)
     private String inn;
+    private Integer version;
 
     private Collection<Address> addresses;
 
@@ -61,5 +62,14 @@ public class Client {
 
     public void setAddresses(Collection<Address> addresses) {
         this.addresses = addresses;
+    }
+
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

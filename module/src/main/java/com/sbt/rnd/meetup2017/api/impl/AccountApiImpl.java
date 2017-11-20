@@ -52,19 +52,21 @@ public class AccountApiImpl implements AccountApi {
             } else
                 account.setCurrency(currencyUtils.getDefault());
 
-            dao.save(account);
-            return account;
+            if (dao.save(account))
+                return account;
+
 
         } finally {
             lock.unlock(); // снимаем блокировку
         }
+        return null;
 
     }
 
     @Override
     public boolean update(Account account) {
         if (account != null)
-            return dao.save(account);
+            return dao.save(account,true);
         return false;
     }
 

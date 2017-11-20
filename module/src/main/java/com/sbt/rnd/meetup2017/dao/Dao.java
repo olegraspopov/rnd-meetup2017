@@ -8,6 +8,7 @@ import org.hibernate.search.jpa.FullTextQuery;
 import org.hibernate.search.jpa.Search;
 
 import javax.persistence.EntityManager;
+import javax.persistence.LockModeType;
 import java.util.List;
 import java.util.Map;
 
@@ -71,10 +72,17 @@ public class Dao implements IDao {
     }
 
     public <T> Boolean save(T entity) {
+        return save(entity,false);
+    }
+
+    public <T> Boolean save(T entity,Boolean lock) {
         return execute(new IExecutor<Boolean>() {
             @Override
             public Boolean execute(EntityManager em) throws Exception {
+                if (lock)
+                    em.lock(entity, LockModeType.OPTIMISTIC);
                 em.persist(entity);
+
                 return true;
             }
         });
