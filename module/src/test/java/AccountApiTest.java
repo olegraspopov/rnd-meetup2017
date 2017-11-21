@@ -96,7 +96,7 @@ public class AccountApiTest {
         String accName = "Основной";
         String accNumber = "40817810000000000004";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
-        assertTrue(accountApi.getAccountsByClient(client.getId()).size() > 0);
+        assertTrue(accountApi.getAccountsByClient(client).size() > 0);
 
     }
 

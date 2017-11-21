@@ -36,19 +36,6 @@ public class ConfigurationMaker implements IgniteConfigurationBuilder {
                         .appendField("default", Boolean.class)
                         .build()
         );
-
-        config.add(
-                createCacheConfig("Account", CacheMode.PARTITIONED)
-                        .withKeyType(Long.class)
-                        .appendIndex("id", Long.class)
-                        .appendField("client", Client.class)
-                        .appendField("clientId", Long.class)
-                        .appendField("accountNumber", String.class)
-                        .appendField("name", String.class)
-                        .appendField("openDate", Date.class)
-                        .appendField("closeDate", Date.class)
-                        .build()
-        );
     }
 
     public TestCacheConfigBuilder createCacheConfig(String name, CacheMode cacheMode) {

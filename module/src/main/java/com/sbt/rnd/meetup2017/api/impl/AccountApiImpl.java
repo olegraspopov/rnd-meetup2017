@@ -105,12 +105,12 @@ public class AccountApiImpl implements AccountApi {
     }
 
     @Override
-    public List<Account> getAccountsByClient(Long clientId) {
+    public List<Account> getAccountsByClient(Client client) {
         //Client client=clientApi.getClientById(clientId);
         //em.createQuery("select a from Account a where a.client=:client").setParameter("client",client).getResultList();
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("clientId", clientId);
-        return dao.search("select a from Account a where a.clientId=:clientId", parameters);
+        parameters.put("client", client);
+        return dao.search("select a from Account a where a.client=:client", parameters);
     }
 
     @Override

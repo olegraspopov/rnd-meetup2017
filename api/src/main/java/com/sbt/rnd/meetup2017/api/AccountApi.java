@@ -19,7 +19,7 @@ public interface AccountApi {
 
     boolean openAccount(String accountNumber);
 
-    List<Account> getAccountsByClient(Long clientId);
+    List<Account> getAccountsByClient(Client client);
 
     Account getAccountById(Long id);
 
