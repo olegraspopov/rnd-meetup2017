@@ -9,13 +9,13 @@ import java.util.List;
 
 public interface AccountApi {
 
-    Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode);
+    Account create(Client client, String accountNumber, String name, Integer currencyIntCode);
 
     boolean update(Account account);
 
     boolean delete(Long accId);
 
-    boolean reserveAccount(Long clientId,String accountNumber,Integer currencyIntCode);
+    boolean reserveAccount(Client client,String accountNumber,Integer currencyIntCode);
 
     boolean openAccount(String accountNumber);
 

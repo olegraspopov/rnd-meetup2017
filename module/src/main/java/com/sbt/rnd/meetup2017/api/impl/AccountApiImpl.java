@@ -32,7 +32,7 @@ public class AccountApiImpl implements AccountApi {
     private static ConcurrentMap<String, ReentrantLock> lockCurator = new ConcurrentHashMap<>();
 
     @Override
-    public Account create(Long clientId, String accountNumber, String name, Integer currencyIntCode) {
+    public Account create(Client client, String accountNumber, String name, Integer currencyIntCode) {
 
         if (!lockCurator.containsKey(accountNumber)) {
             lockCurator.putIfAbsent(accountNumber, new ReentrantLock());
@@ -45,7 +45,6 @@ public class AccountApiImpl implements AccountApi {
             if (account != null)
                 throw new RuntimeException("Счет с номером=" + accountNumber + "  уже зарегистрирован в системе");
 
-            Client client = clientApi.getClientById(clientId);
             account = new Account(client, accountNumber, name);
             if (currencyIntCode != null) {
                 account.setCurrency(currencyUtils.getByIntCode(currencyIntCode));
@@ -79,9 +78,9 @@ public class AccountApiImpl implements AccountApi {
     }
 
     @Override
-    public boolean reserveAccount(Long clientId, String accountNumber, Integer currencyIntCode) {
+    public boolean reserveAccount(Client client, String accountNumber, Integer currencyIntCode) {
 
-        return create(clientId, accountNumber, "Резервирование счета для клиента id=" + clientId, currencyIntCode) != null;
+        return create(client, accountNumber, "Резервирование счета для клиента id=" + client.getId(), currencyIntCode) != null;
     }
 
     @Override

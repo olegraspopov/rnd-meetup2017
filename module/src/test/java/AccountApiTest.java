@@ -40,7 +40,7 @@ public class AccountApiTest {
         dao.save(currency);
         String accName = "Основной";
         String accNumber = "40817810000000000001";
-        Account account = accountApi.create(client.getId(), accNumber, accName, currency.getIntCode());
+        Account account = accountApi.create(client, accNumber, accName, currency.getIntCode());
         assertThat(account, is(notNullValue(Account.class)));
         assertThat(account.getId(), is(notNullValue(Long.class)));
         assertThat(account.getName(), is(accName));
@@ -56,7 +56,7 @@ public class AccountApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000002";
-        Account account = accountApi.create(client.getId(), accNumber, accName, null);
+        Account account = accountApi.create(client, accNumber, accName, null);
 
         account = accountApi.getAccountById(account.getId());
         assertThat(account, is(notNullValue(Account.class)));
@@ -81,7 +81,7 @@ public class AccountApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000003";
-        Account account = accountApi.create(client.getId(), accNumber, accName, null);
+        Account account = accountApi.create(client, accNumber, accName, null);
         Long id = account.getId();
         accountApi.delete(id);
         account = dao.findById(Account.class, id);
@@ -95,7 +95,7 @@ public class AccountApiTest {
         assertThat(client, is(notNullValue(Client.class)));
         String accName = "Основной";
         String accNumber = "40817810000000000004";
-        Account account = accountApi.create(client.getId(), accNumber, accName, null);
+        Account account = accountApi.create(client, accNumber, accName, null);
         assertTrue(accountApi.getAccountsByClient(client).size() > 0);
 
     }
@@ -106,14 +106,14 @@ public class AccountApiTest {
         Client client = clientApi.create("Погодин", "1111111111", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accNumber = "40817810000000000111";
-        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+        assertTrue(accountApi.reserveAccount(client, accNumber, null));
 
         Account account = accountApi.getAccountByNumber(accNumber);
         assertThat(account, is(notNullValue(Account.class)));
         assertFalse(accountApi.accountIsOpen(account));
 
         try {
-            accountApi.reserveAccount(client.getId(), accNumber, null);
+            accountApi.reserveAccount(client, accNumber, null);
         } catch (RuntimeException ex) {
             assertEquals(ex.getMessage(), "Счет с номером=" + accNumber + "  уже зарегистрирован в системе");
         }
@@ -125,7 +125,7 @@ public class AccountApiTest {
         Client client = clientApi.create("Погодин", "1111111111", null);
         assertThat(client, is(notNullValue(Client.class)));
         String accNumber = "40817810000000000222";
-        assertTrue(accountApi.reserveAccount(client.getId(), accNumber, null));
+        assertTrue(accountApi.reserveAccount(client, accNumber, null));
 
         assertTrue(accountApi.openAccount(accNumber));
         Account account = accountApi.getAccountByNumber(accNumber);
@@ -146,7 +146,7 @@ public class AccountApiTest {
             @Override
             public void run() {
                 try {
-                    accountApi.reserveAccount(client.getId(), accNumber, null);
+                    accountApi.reserveAccount(client, accNumber, null);
                 } catch (RuntimeException ex) {
                     assertEquals(ex.getMessage(), "Счет с номером=" + accNumber + "  уже зарегистрирован в системе");
                 } finally {
