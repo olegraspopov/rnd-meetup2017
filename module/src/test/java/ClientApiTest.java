@@ -1,11 +1,6 @@
 import com.sbt.rnd.meetup2017.api.ClientApi;
-import com.sbt.rnd.meetup2017.data.ogm.Account;
-import com.sbt.rnd.meetup2017.data.ogm.Address;
+import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.data.ogm.Document;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Dog;
-import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,22 +8,19 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import javax.transaction.*;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
 
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration(locations = "classpath:spring-beans.xml")
 @RunWith(SpringJUnit4ClassRunner.class)
 public class ClientApiTest {
     @Autowired
-    private EntityManager em;
+    private IDao dao;
 
     @Autowired
     private ClientApi clientApi;
@@ -36,10 +28,10 @@ public class ClientApiTest {
     @Test
     public void testCreate() throws Exception {
 
-        String name= "Пупкин";
-        String inn="09999991110";
-        Client client = clientApi.create(name, inn,null);
-
+        String name = "Владимиров";
+        String inn = "7234567890";
+        Client client = clientApi.create(name, inn, null);
+        assertThat(client, is(notNullValue(Client.class)));
         assertThat(client.getId(), is(notNullValue(Long.class)));
         assertThat(client.getName(), is(name));
         assertThat(client.getInn(), is(inn));
@@ -49,18 +41,54 @@ public class ClientApiTest {
     @Test
     public void testUpdate() throws Exception {
 
+        String inn = "8234567890";
+        Client client = clientApi.create("Васильев", inn, null);
 
-        String inn="09999991110";
-       /* Client client =  em.find(Client.class, inn);
-        Long id=client.getId();
+        //List<Client> clientList =  dao.search("select c from Client c");
+        client = clientApi.getClientById(client.getId());
+        assertThat(client, is(notNullValue(Client.class)));
+        Long id = client.getId();
         assertThat(id, is(notNullValue(Long.class)));
         assertThat(client.getInn(), is(inn));
         client.setName("Иванов");
-        client.setInn("123456");
+        inn = "123456";
+        client.setInn(inn);
 
         clientApi.update(client);
-        client =  em.find(Client.class, id);*/
+        client = clientApi.getClientById(id);
+        assertThat(client.getInn(), is(inn));
 
+    }
+
+    @Test
+    public void testDelete() throws Exception {
+
+        Client client = clientApi.create("Дмитриев", "1234567891", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        Long id = client.getId();
+        clientApi.delete(id);
+        client = dao.findById(Client.class, id);
+        assertThat(client, is(nullValue(Client.class)));
+
+    }
+
+    @Test
+    public void testGetClientById() throws Exception {
+
+        Client client = clientApi.create("Георгиев", "1444567001", null);
+        assertThat(client, is(notNullValue(Client.class)));
+
+        assertNotNull(clientApi.getClientById(client.getId()));
+
+    }
+
+    @Test
+    public void testGetClientByInn() throws Exception {
+
+        Client client = clientApi.create("Тестов", "1234567001", null);
+        assertThat(client, is(notNullValue(Client.class)));
+
+        assertTrue(clientApi.getClientByInn("1234567001").size() > 0);
 
     }
 }

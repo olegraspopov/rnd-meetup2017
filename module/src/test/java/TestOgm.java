@@ -7,6 +7,11 @@ import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
 import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Dog;
 import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.apache.ignite.Ignite;
+import org.apache.lucene.search.Query;
+import org.hibernate.search.jpa.FullTextEntityManager;
+import org.hibernate.search.jpa.FullTextQuery;
+import org.hibernate.search.jpa.Search;
+import org.hibernate.search.query.dsl.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -27,6 +32,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.assertThat;
@@ -39,39 +45,6 @@ public class TestOgm {
 
     @Autowired
     private ClientApi clientApi;
-
-    public static void main(String[] args) throws SystemException, NotSupportedException, HeuristicRollbackException, HeuristicMixedException, RollbackException {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-        Breed collie = new Breed();
-        collie.setName("breed-collie");
-        em.persist(collie);
-        Dog dina = new Dog();
-        dina.setName("dina");
-        dina.setBreed(collie);
-        //persist dina
-        em.persist(dina);
-        em.getTransaction().commit();
-
-        //get ID dina
-        Long dinaId = dina.getId();
-        // query
-        Dog ourDina = em.find(Dog.class, dinaId);
-        System.out.println("Dina:" + ourDina);
-        em.close();
-    }
-
-   /* @Before
-    public void setUp() throws Exception {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("ogm-jpa-tutorial");
-        em = emf.createEntityManager();
-    }*/
-
-   /* @After
-    public void tearDown() throws Exception {
-        em.close();
-    }*/
 
     @Test
     public void testAccountPersistAndRead() throws Exception {
@@ -98,6 +71,26 @@ public class TestOgm {
         assertThat(accountRead, is(notNullValue(Account.class)));
         assertThat(accountRead.getId(), is(id));
     }
+
+    /*@Test
+    public void testAddressPersistAndRead() throws Exception {
+        Address address = new Address("ул. Ленина", 344000);
+        assertThat(address.getId(), is(nullValue(Long.class)));
+
+        em.getTransaction().begin();
+        assertThat(address.getId(), is(nullValue(Long.class)));
+
+        em.persist(address);
+        assertThat(address.getId(), is(notNullValue(Long.class)));
+
+        Long id = address.getId();
+        em.getTransaction().commit();
+        assertThat(address.getId(), is(id));
+
+        Address addressRead = em.findById(Address.class, id);
+        assertThat(addressRead, is(notNullValue(Address.class)));
+        assertThat(addressRead.getId(), is(id));
+    }*/
 
     @Test
     public void testClientPersistAndRead() throws Exception {

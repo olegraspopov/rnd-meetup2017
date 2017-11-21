@@ -1,6 +1,9 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
 import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
+import org.hibernate.search.annotations.Analyze;
+import org.hibernate.search.annotations.Field;
+import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -8,17 +11,21 @@ import java.util.Collection;
 import java.util.Date;
 
 @Entity
+@Indexed
 public class Account {
     private Long id;
     private Client client;
+    private Long clientId;
     private String accountNumber;
     private String name;
     private Date openDate;
+    private int state=0;
     private Date closeDate;
 
     private Collection<Document> docs;
     private BigDecimal balance;
     private Currency currency;
+    private Integer version;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -32,12 +39,14 @@ public class Account {
 
     public Account(Client client, String accountNumber, String name) {
         this.client = client;
+        this.clientId=client.getId();
         this.accountNumber = accountNumber;
         this.name = name;
         this.openDate = new Date();
 
     }
 
+    @Field(analyze = Analyze.YES)
     public String getAccountNumber() {
         return accountNumber;
     }
@@ -70,7 +79,7 @@ public class Account {
         this.openDate = openDate;
     }
 
-    @ManyToOne(targetEntity=Client.class,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = Client.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Client getClient() {
         return client;
     }
@@ -86,7 +95,8 @@ public class Account {
     public void setBalance(BigDecimal balance) {
         this.balance = balance;
     }
-    @ManyToOne(targetEntity=Currency.class,fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+
+    @ManyToOne(targetEntity = Currency.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     public Currency getCurrency() {
         return currency;
     }
@@ -95,12 +105,37 @@ public class Account {
         this.currency = currency;
     }
 
-    @OneToMany(targetEntity=Document.class)
+    @OneToMany(targetEntity = Document.class)
     public Collection<Document> getDocs() {
         return docs;
     }
 
     public void setDocs(Collection<Document> docs) {
         this.docs = docs;
+    }
+
+    public Long getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(Long clientId) {
+        this.clientId = clientId;
+    }
+
+    public int getState() {
+        return state;
+    }
+
+    public void setState(int state) {
+        this.state = state;
+    }
+
+    @Version
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 }

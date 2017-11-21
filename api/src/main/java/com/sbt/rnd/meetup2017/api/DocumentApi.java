@@ -7,15 +7,20 @@ import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 public interface DocumentApi {
 
-    Document create(Account debetAccount, Account creditAccount, BigDecimal sumDoc, String aim);
+    Document create(Long debetAccount, Long creditAccount, BigDecimal sumDoc, String aim);
 
-    boolean edit(Document document);
+    boolean update(Document document);
 
     boolean delete(Long docId);
 
     boolean workOut(Long docId, Date dateWork);
+
+    List<Document> getDocumentsByClient(Long clientId,DocumentFilter filter);
+
+    Document getDocumentById(Long id);
 
 }
