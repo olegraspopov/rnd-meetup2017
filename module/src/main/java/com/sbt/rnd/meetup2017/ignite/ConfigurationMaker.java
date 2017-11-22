@@ -1,7 +1,5 @@
 package com.sbt.rnd.meetup2017.ignite;
 
-import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
 import org.apache.ignite.binary.BinaryObject;
 import org.apache.ignite.cache.*;
 import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
