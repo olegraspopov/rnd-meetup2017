@@ -1,4 +1,4 @@
-package com.sbt.rnd.meetup2017.api;
+package com.sbt.rnd.meetup2017.api.account;
 
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Client;

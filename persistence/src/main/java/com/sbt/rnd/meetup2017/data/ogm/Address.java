@@ -1,9 +1,10 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Embeddable
-public class Address {
+public class Address implements Serializable {
 
     private String street;
     private int zip;

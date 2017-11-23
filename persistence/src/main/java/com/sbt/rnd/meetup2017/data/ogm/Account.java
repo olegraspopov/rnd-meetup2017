@@ -6,13 +6,14 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Indexed
-public class Account {
+public class Account implements Serializable {
     private Long id;
     private Client client;
     private Long clientId;
@@ -26,6 +27,9 @@ public class Account {
     private BigDecimal balance;
     private Currency currency;
     private Integer version;
+
+    public Account() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)

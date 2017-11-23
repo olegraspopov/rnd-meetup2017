@@ -6,11 +6,12 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Collection;
 
 @Entity
 @Indexed
-public class Client {
+public class Client implements Serializable {
 
     private Long id;
     private String name;

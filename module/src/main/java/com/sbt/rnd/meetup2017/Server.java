@@ -1,55 +1,46 @@
 package com.sbt.rnd.meetup2017;
 
-import com.sbt.rnd.meetup2017.api.AccountApi;
-import com.sbt.rnd.meetup2017.api.ClientApi;
+import com.sbt.rnd.meetup2017.api.account.AccountApi;
+import com.sbt.rnd.meetup2017.api.client.ClientApi;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.transport.Consumer;
+import com.sbt.rnd.meetup2017.transport.*;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 public class Server {
 
-    public static void main( String[] args ){
-        ClassPathXmlApplicationContext context =
+    public static void main(String[] args) {
+       /* ClassPathXmlApplicationContext context =
                 new ClassPathXmlApplicationContext("spring-beans.xml");
-        AccountApi accountApi = (AccountApi)context.getBean("accountApi");
+        AccountApi accountApi = (AccountApi) context.getBean("accountApi");
         accountApi.getAccountByNumber("21123123");
-        ClientApi clientApi = (ClientApi)context.getBean("clientApi");
-        Client client=clientApi.create("sdkjfds","asdasd",null);
-        System.out.println(client.getInn());
+        ClientApi clientApi = (ClientApi) context.getBean("clientApi");
+        Client client = clientApi.create("sdkjfds", "asdasd", null);
+        System.out.println(client.getInn());*/
 
-        int numConsumers = 3;
+        int numConsumers = 1;
         String groupId = "octopus";
-        List<String> topics = Arrays.asList( "test-topic" );
+        List<String> topics = Arrays.asList("test-topic");
 
-        ExecutorService executor = Executors.newFixedThreadPool( numConsumers );
-        final List<Consumer> consumers = new ArrayList<>();
-
-        for( int i = 0; i < numConsumers; i++ ){
-            Consumer consumer = new Consumer( i, groupId, topics );
-            consumers.add( consumer );
-            executor.submit( consumer );
-        }
-
-        Runtime.getRuntime().addShutdownHook( new Thread(){
+        new TransportListener(numConsumers, groupId, "localhost:9092", topics).start(new MsgHandler<ConsumerRecord<String, byte[]>>() {
             @Override
-            public void run(){
-                for( Consumer consumer : consumers ){
-                    consumer.shutdown();
-                }
-                executor.shutdown();
-                try{
-                    executor.awaitTermination( 5000, TimeUnit.MILLISECONDS );
-                }catch( InterruptedException e ){
-                    e.printStackTrace();
-                }
+            public <V> V  handle(ConsumerRecord<String, byte[]> record) {
+                Msg msg = Serializer.deserialize(record.value());
+                System.out.println("msg: " + msg.toString());
+                Msg respMsg = new Msg("123456", new Date());
+                MsgProducer respProd = new MsgProducer("test-topic-reply", respMsg, groupId, "localhost:9092");
+                respProd.sendMsg();
+                System.out.println("12334send answer: " + respMsg);
+
+                return null;
             }
-        } );
+        });
+
     }
+
+
 }

@@ -1,4 +1,6 @@
-package com.sbt.rnd.meetup2017.api;
+package com.sbt.rnd.meetup2017.api.document;
+
+import com.sbt.rnd.meetup2017.api.StateHolder;
 
 import java.io.Serializable;
 

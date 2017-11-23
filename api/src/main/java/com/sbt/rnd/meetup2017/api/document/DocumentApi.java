@@ -1,9 +1,6 @@
-package com.sbt.rnd.meetup2017.api;
+package com.sbt.rnd.meetup2017.api.document;
 
-import com.sbt.rnd.meetup2017.data.ogm.Account;
-import com.sbt.rnd.meetup2017.data.ogm.Client;
 import com.sbt.rnd.meetup2017.data.ogm.Document;
-import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 
 import java.math.BigDecimal;
 import java.util.Date;

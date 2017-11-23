@@ -1,14 +1,12 @@
 package com.sbt.rnd.meetup2017.api.impl;
 
-import com.sbt.rnd.meetup2017.api.AccountApi;
-import com.sbt.rnd.meetup2017.api.ClientApi;
+import com.sbt.rnd.meetup2017.api.account.AccountApi;
+import com.sbt.rnd.meetup2017.api.client.ClientApi;
 import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.data.ogm.dictionary.Currency;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.persistence.EntityManager;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;

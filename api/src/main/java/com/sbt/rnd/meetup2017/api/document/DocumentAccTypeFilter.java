@@ -1,4 +1,4 @@
-package com.sbt.rnd.meetup2017.api;
+package com.sbt.rnd.meetup2017.api.document;
 
 import java.io.Serializable;
 

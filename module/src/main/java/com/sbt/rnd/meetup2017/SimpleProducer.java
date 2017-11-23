@@ -1,36 +1,47 @@
 package com.sbt.rnd.meetup2017;
 
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
+import com.sbt.rnd.meetup2017.transport.*;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 
-import java.util.Properties;
+import java.util.Arrays;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.FutureTask;
 
 public class SimpleProducer {
-    public static void main( String[] args ) throws ExecutionException, InterruptedException{
-        Properties props = new Properties();
-
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("acks", "all");
-        props.put("retries", 0);
-        props.put("batch.size", 16384);
-        props.put("linger.ms", 1);
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put( "client.id", "octopus" );
+    public static void main(String[] args) throws ExecutionException, InterruptedException {
 
         String topic = "test-topic";
 
-        Producer<String, String> producer = new KafkaProducer<>( props );
+        Msg msg = new Msg("123456", "this is message SimpleProducer");
 
-        for( int i = 0; i < 10; i++ ){
-            ProducerRecord<String, String> message = new ProducerRecord<>( topic, "this is message " + i );
-            producer.send( message );
-            System.out.println("message sent.");
-        }
+        MsgProducer msgProducer = new MsgProducer(topic, msg, "octopus", "localhost:9092");
 
-        producer.close(); // don't forget this
+        msgProducer.sendMsg();
+        System.out.println("message sent.");
+        Callable callable = new Callable() {
+            @Override
+            public Object call() throws Exception {
+                String result;
+                MsgConsumer msgConsumer = new MsgConsumer(134, "octopus", "localhost:9092", Arrays.asList(topic + "-reply"), new MsgHandler<ConsumerRecord<String, byte[]>>() {
+
+                    @Override
+                    public <V> V handle(ConsumerRecord<String, byte[]> record) {
+                        Msg msg = Serializer.deserialize(record.value());
+                        System.out.println("Received answer msg: " + msg.toString());
+
+                        return (V) msg.toString();
+                    }
+                });
+
+                return msgConsumer.runMsgReplyListener();
+            }
+        };
+        FutureTask task = new FutureTask(callable);
+        new Thread(task).start();
+
+        System.out.println("result = " + task.get());
+
+
     }
 }
