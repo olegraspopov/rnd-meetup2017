@@ -1,7 +1,5 @@
 package com.sbt.rnd.meetup2017.ignite;
 
-import com.sbt.rnd.meetup2017.data.ogm.Client;
-import com.sbt.rnd.meetup2017.data.ogm.breed_n_dog.Breed;
 import org.apache.ignite.binary.BinaryObject;
 import org.apache.ignite.cache.*;
 import org.apache.ignite.cache.affinity.rendezvous.RendezvousAffinityFunction;
@@ -34,19 +32,6 @@ public class ConfigurationMaker implements IgniteConfigurationBuilder {
                         .appendField("intCode", Integer.class)
                         .appendField("name", String.class)
                         .appendField("default", Boolean.class)
-                        .build()
-        );
-
-        config.add(
-                createCacheConfig("Account", CacheMode.PARTITIONED)
-                        .withKeyType(Long.class)
-                        .appendIndex("id", Long.class)
-                        .appendField("client", Client.class)
-                        .appendField("clientId", Long.class)
-                        .appendField("accountNumber", String.class)
-                        .appendField("name", String.class)
-                        .appendField("openDate", Date.class)
-                        .appendField("closeDate", Date.class)
                         .build()
         );
     }

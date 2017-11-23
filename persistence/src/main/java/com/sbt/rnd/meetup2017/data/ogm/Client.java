@@ -8,6 +8,7 @@ import org.hibernate.search.annotations.Indexed;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Set;
 
 @Entity
 @Indexed
@@ -18,6 +19,8 @@ public class Client implements Serializable {
     @QuerySqlField(index = true)
     private String inn;
     private Integer version;
+
+    private Set<Account> accounts;
 
     private Collection<Address> addresses;
 
@@ -72,5 +75,14 @@ public class Client implements Serializable {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    @OneToMany(mappedBy = "client")
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public void setAccounts(Set<Account> accounts) {
+        this.accounts = accounts;
     }
 }
