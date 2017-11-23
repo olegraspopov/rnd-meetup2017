@@ -4,9 +4,7 @@ import com.sbt.rnd.meetup2017.transport.*;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 
 import java.util.Arrays;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.FutureTask;
+import java.util.concurrent.*;
 
 public class SimpleProducer {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
@@ -34,11 +32,12 @@ public class SimpleProducer {
                     }
                 });
 
-                return msgConsumer.runMsgReplyListener();
+                return msgConsumer.getMsgReply();
             }
         };
-        FutureTask task = new FutureTask(callable);
-        new Thread(task).start();
+        ExecutorService threadPool = Executors.newFixedThreadPool(1);
+        Future<?> task = threadPool.submit(callable);
+        threadPool.shutdown();
 
         System.out.println("result = " + task.get());
 

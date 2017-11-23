@@ -49,7 +49,7 @@ public class MsgConsumer<T> implements Runnable {
         }
     }
 
-    public <V> V runMsgReplyListener() {
+    public <V> V getMsgReply() {
         V result = null;
         try {
             consumer.subscribe(topics);
