@@ -1,4 +1,4 @@
-import com.sbt.rnd.meetup2017.api.client.ClientApi;
+import com.sbt.rnd.meetup2017.transport.api.client.ClientApi;
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
 import com.sbt.rnd.meetup2017.data.ogm.Document;

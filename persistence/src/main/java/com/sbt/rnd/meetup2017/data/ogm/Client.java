@@ -85,4 +85,13 @@ public class Client implements Serializable {
     public void setAccounts(Set<Account> accounts) {
         this.accounts = accounts;
     }
+
+    @Override
+    public String toString() {
+        return "Client{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", inn='" + inn + '\'' +
+                '}';
+    }
 }

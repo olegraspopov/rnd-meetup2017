@@ -20,5 +20,18 @@
     <tx:annotation-driven proxy-target-class="true" mode="aspectj"/>
     <context:property-placeholder location="module.properties" />
 
+    <bean id="transportObjectFactory" class="com.sbt.rnd.meetup2017.transport.impl.server.TransportObjectFactoryImpl"/>
+
+    <bean id="clientApiServer" class="com.sbt.rnd.meetup2017.transport.impl.server.SpringApiServer">
+        <constructor-arg name="objectFactory" ref="transportObjectFactory"/>
+        <constructor-arg name="baseApiPackage" value="com.sbt.rnd.meetup2017.transport.api.client"/>
+        <constructor-arg name="baseServicesPackage" value="com.sbt.rnd.meetup2017.transport.api.impl"/>
+    </bean>
+
+    <bean id="accountApiServer" class="com.sbt.rnd.meetup2017.transport.impl.server.SpringApiServer">
+        <constructor-arg name="objectFactory" ref="transportObjectFactory"/>
+        <constructor-arg name="baseApiPackage" value="com.sbt.rnd.meetup2017.transport.api.account"/>
+        <constructor-arg name="baseServicesPackage" value="com.sbt.rnd.meetup2017.transport.api.impl"/>
+    </bean>
 
 </beans>

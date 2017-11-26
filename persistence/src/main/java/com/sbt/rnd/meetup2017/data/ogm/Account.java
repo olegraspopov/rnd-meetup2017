@@ -132,4 +132,19 @@ public class Account implements Serializable {
     public void setVersion(Integer version) {
         this.version = version;
     }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", client=" + client +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", name='" + name + '\'' +
+                ", openDate=" + openDate +
+                ", state=" + state +
+                ", closeDate=" + closeDate +
+                ", balance=" + balance +
+                ", currency=" + currency +
+                '}';
+    }
 }
