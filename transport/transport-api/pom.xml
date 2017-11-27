@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.sbt.rnd</groupId>
-        <artifactId>rnd-meetup2017</artifactId>
+        <artifactId>transport</artifactId>
         <version>1.0-SNAPSHOT</version>
     </parent>
 
