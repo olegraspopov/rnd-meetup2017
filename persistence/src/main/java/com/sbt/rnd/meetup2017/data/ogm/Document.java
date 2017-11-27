@@ -1,11 +1,12 @@
 package com.sbt.rnd.meetup2017.data.ogm;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
-public class Document {
+public class Document implements Serializable{
     private Long id;
     private Account debetAccount;
     private Account creditAccount;

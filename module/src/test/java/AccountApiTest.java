@@ -1,5 +1,5 @@
-import com.sbt.rnd.meetup2017.api.AccountApi;
-import com.sbt.rnd.meetup2017.api.ClientApi;
+import com.sbt.rnd.meetup2017.transport.api.account.AccountApi;
+import com.sbt.rnd.meetup2017.transport.api.client.ClientApi;
 import com.sbt.rnd.meetup2017.dao.IDao;
 import com.sbt.rnd.meetup2017.data.ogm.Account;
 import com.sbt.rnd.meetup2017.data.ogm.Client;
@@ -12,7 +12,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.concurrent.Semaphore;
+import java.util.List;
+import java.util.concurrent.*;
 
 import static org.hamcrest.CoreMatchers.*;
 import static org.junit.Assert.*;
@@ -96,7 +97,7 @@ public class AccountApiTest {
         String accName = "Основной";
         String accNumber = "40817810000000000004";
         Account account = accountApi.create(client.getId(), accNumber, accName, null);
-        assertTrue(accountApi.getAccountsByClient(client).size() > 0);
+        assertTrue(accountApi.getAccountsByClient(client.getId()).size() > 0);
 
     }
 
@@ -167,6 +168,62 @@ public class AccountApiTest {
         assertThat(account, is(notNullValue(Account.class)));
         assertFalse(accountApi.accountIsOpen(account));
 
+    }
+
+    @Test
+    public void testReserveRaceCondition() throws Exception {
+
+        Client client = clientApi.create("Погодин", "1111111666", null);
+        assertThat(client, is(notNullValue(Client.class)));
+        /*Currency juan = new Currency("YAN", 840, "Юань");
+        dao.save(juan);*/
+        Currency euro = new Currency("EUR", 890, "Евро");
+        dao.save(euro);
+
+
+        int n = 100;
+
+        Currency[] currencies = new Currency[n];
+        for (int i = 0; i < currencies.length; i++) {
+            Currency currency = new Currency("Curr" + i, 900 + i, "Валюта" + i);
+            dao.save(currency);
+            currencies[i] = currency;
+        }
+
+        // create a pool of threads, 10 max jobs will execute in parallel
+        ExecutorService threadPool = Executors.newFixedThreadPool(n);
+
+        List<Future<?>> futures = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            String accNumber = "40817810000000000"+i;
+            Integer currencyCode = currencies[i].getIntCode();
+            Future<?> submit = threadPool.submit(() -> {
+                try {
+                    accountApi.reserveAccount(client.getId(), accNumber, currencyCode);
+
+                    Account account = accountApi.getAccountByNumber(accNumber);
+                    assertThat(account, is(notNullValue(Account.class)));
+                    assertEquals(currencyCode, account.getCurrency().getIntCode());
+                } catch (Exception ex) {
+                    System.out.println("ERROR - " + ex);
+                    throw ex;
+                }
+
+            });
+            futures.add(submit);
+        }
+
+        threadPool.shutdown();
+        // wait for the threads to finish if necessary
+        threadPool.awaitTermination(Long.MAX_VALUE, TimeUnit.MILLISECONDS);
+
+        for (Future<?> future : futures) {
+            assertTrue(future.isDone());
+        }
+
+        for (Future<?> future : futures) {
+            assertTrue(future.get() == null);
+        }
     }
 
 }

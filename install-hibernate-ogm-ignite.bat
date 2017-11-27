@@ -1,0 +1,1 @@
+mvn install:install-file -Dfile=hibernate-ogm-ignite-5.2.0-SNAPSHOT.jar -DgroupId=org.hibernate.ogm -DartifactId=hibernate-ogm-ignite -Dversion=5.2.0-SNAPSHOT -Dpackaging=jar

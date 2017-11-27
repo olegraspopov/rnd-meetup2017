@@ -6,16 +6,16 @@ import org.hibernate.search.annotations.Field;
 import org.hibernate.search.annotations.Indexed;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Date;
 
 @Entity
 @Indexed
-public class Account {
+public class Account implements Serializable {
     private Long id;
     private Client client;
-    private Long clientId;
     private String accountNumber;
     private String name;
     private Date openDate;
@@ -26,6 +26,9 @@ public class Account {
     private BigDecimal balance;
     private Currency currency;
     private Integer version;
+
+    public Account() {
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
@@ -39,7 +42,6 @@ public class Account {
 
     public Account(Client client, String accountNumber, String name) {
         this.client = client;
-        this.clientId=client.getId();
         this.accountNumber = accountNumber;
         this.name = name;
         this.openDate = new Date();
@@ -114,14 +116,6 @@ public class Account {
         this.docs = docs;
     }
 
-    public Long getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(Long clientId) {
-        this.clientId = clientId;
-    }
-
     public int getState() {
         return state;
     }
@@ -137,5 +131,20 @@ public class Account {
 
     public void setVersion(Integer version) {
         this.version = version;
+    }
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id +
+                ", client=" + client +
+                ", accountNumber='" + accountNumber + '\'' +
+                ", name='" + name + '\'' +
+                ", openDate=" + openDate +
+                ", state=" + state +
+                ", closeDate=" + closeDate +
+                ", balance=" + balance +
+                ", currency=" + currency +
+                '}';
     }
 }

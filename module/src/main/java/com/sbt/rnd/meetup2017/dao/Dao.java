@@ -35,7 +35,7 @@ public class Dao implements IDao {
         return entityManager;
     }
 
-    public <T> T execute(IExecutor<T> executor) {
+    public synchronized <T> T execute(IExecutor<T> executor) {
         boolean inTransaction = entityManager.getTransaction().isActive();
         int txId = entityManager.getTransaction().hashCode();
         try {
@@ -58,7 +58,8 @@ public class Dao implements IDao {
             try {
 
                 if (!inTransaction) {
-                    entityManager.getTransaction().rollback();
+                    if (entityManager.getTransaction().isActive())
+                        entityManager.getTransaction().rollback();
                 }
 
             } catch (Exception e) {
@@ -71,11 +72,11 @@ public class Dao implements IDao {
         return null;
     }
 
-    public <T> Boolean save(T entity) {
+    public synchronized <T> Boolean save(T entity) {
         return save(entity,false);
     }
 
-    public <T> Boolean save(T entity,Boolean lock) {
+    public synchronized <T> Boolean save(T entity,Boolean lock) {
         return execute(new IExecutor<Boolean>() {
             @Override
             public Boolean execute(EntityManager em) throws Exception {
@@ -88,7 +89,7 @@ public class Dao implements IDao {
         });
     }
 
-    public <T> Boolean remove(T entity) {
+    public synchronized <T> Boolean remove(T entity) {
         return execute(new IExecutor<Boolean>() {
             @Override
             public Boolean execute(EntityManager em) throws Exception {
@@ -98,18 +99,18 @@ public class Dao implements IDao {
         });
     }
 
-    public <T> T findById(Class<T> entityClass, Long id) {
+    public synchronized <T> T findById(Class<T> entityClass, Long id) {
         if (id==null)
             throw new RuntimeException("Ошибка при чтении сущности "+entityClass+": id не может быть пустым.");
         return entityManager.find(entityClass, id);
     }
 
-    public <T> List<T> search(String query) {
+    public synchronized <T> List<T> search(String query) {
 
         return search(query, null);
     }
 
-    public <T> List<T> search(String query, Map<String, Object> parameters) {
+    public synchronized <T> List<T> search(String query, Map<String, Object> parameters) {
         javax.persistence.Query q = entityManager.createQuery(query);
         if (parameters != null && parameters.size() > 0)
             for (Map.Entry<String, Object> entry : parameters.entrySet())
@@ -117,7 +118,7 @@ public class Dao implements IDao {
         return q.getResultList();
     }
 
-    public <T> List<T> fullTextSearch(Class<T> entityClass, Query query) {
+    public synchronized <T> List<T> fullTextSearch(Class<T> entityClass, Query query) {
 
         //Optionally use the QueryBuilder to simplify Query definition:
 
