@@ -1,5 +1,6 @@
 package com.sbt.rnd.meetup2017.transport.api.impl;
 
+import com.sbt.rnd.meetup2017.transport.api.ApiImpl;
 import com.sbt.rnd.meetup2017.transport.api.account.AccountApi;
 import com.sbt.rnd.meetup2017.transport.api.document.DocumentApi;
 import com.sbt.rnd.meetup2017.transport.api.document.DocumentFilter;
@@ -14,6 +15,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ApiImpl
 public class DocumentApiImpl implements DocumentApi {
 
     @Autowired

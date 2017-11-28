@@ -3,6 +3,7 @@ package com.sbt.rnd.meetup2017.transport.config;
 import com.sbt.rnd.meetup2017.transport.api.account.AccountApiRequest;
 import com.sbt.rnd.meetup2017.transport.api.client.ClientApiRequest;
 import com.sbt.rnd.meetup2017.transport.api.TransportProxyFactory;
+import com.sbt.rnd.meetup2017.transport.api.document.DocumentApiRequest;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +23,12 @@ public class ApiRequestConfig {
     AccountApiRequest accountApiRequest(@Qualifier("transportProxyFactory") TransportProxyFactory proxyFactory) {
         AccountApiRequest accountApiRequest = proxyFactory.createTransportProxy(AccountApiRequest.class);
         return accountApiRequest;
+    }
+
+    @Bean
+    DocumentApiRequest documentApiRequest(@Qualifier("transportProxyFactory") TransportProxyFactory proxyFactory) {
+        DocumentApiRequest documentApiRequest = proxyFactory.createTransportProxy(DocumentApiRequest.class);
+        return documentApiRequest;
     }
 
 }
