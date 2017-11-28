@@ -20,9 +20,13 @@ public class ClientRequest {
         System.out.println(client.toString());
 
         AccountApiRequest accountApiRequest = (AccountApiRequest) context.getBean("accountApiRequest");
-        Request<Account> requestAcc = accountApiRequest.create(client.getId(), "40817000000000", "test",null);
+        Request<Account> requestAcc = accountApiRequest.create(client.getId(), "408170000000001223", "test",null);
         Account account=requestAcc.execute();
         System.out.println(account.toString());
+
+        Request<Boolean> requestAccRes = accountApiRequest.reserveAccount(client.getId(), "408170000000001223",null);
+        Boolean accRes=requestAccRes.execute();
+        System.out.println("reserved="+accRes);
 
     }
 }

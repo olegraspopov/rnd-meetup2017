@@ -1,5 +1,6 @@
 package com.sbt.rnd.meetup2017.transport.impl.client;
 
+import com.sbt.rnd.meetup2017.transport.api.TransportRuntimeException;
 import com.sbt.rnd.meetup2017.transport.impl.*;
 import com.sbt.rnd.meetup2017.transport.message.Message;
 import com.sbt.rnd.meetup2017.transport.message.MessageProperties;
@@ -114,6 +115,11 @@ public class RpcRequestImpl implements Rpc, MessageHandler<ConsumerRecord<String
 
         Message message = Serializer.deserialize(record.value());
         LOGGER.trace("Received answer : " + message.toString());
+        if (message.getValue() instanceof TransportRuntimeException) {
+            TransportRuntimeException transportRuntimeException = (TransportRuntimeException) message.getValue();
+            throw transportRuntimeException;
+
+        }
 
         return (V) message.getValue();
 
