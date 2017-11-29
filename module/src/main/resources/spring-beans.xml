@@ -34,4 +34,10 @@
         <constructor-arg name="baseServicesPackage" value="com.sbt.rnd.meetup2017.transport.api.impl"/>
     </bean>
 
+    <bean id="documentApiServer" class="com.sbt.rnd.meetup2017.transport.impl.server.SpringApiServer">
+        <constructor-arg name="objectFactory" ref="transportObjectFactory"/>
+        <constructor-arg name="baseApiPackage" value="com.sbt.rnd.meetup2017.transport.api.document"/>
+        <constructor-arg name="baseServicesPackage" value="com.sbt.rnd.meetup2017.transport.api.impl"/>
+    </bean>
+
 </beans>

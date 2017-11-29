@@ -1,6 +1,10 @@
 package com.sbt.rnd.meetup2017.transport.impl.server;
 
-import com.sbt.rnd.meetup2017.transport.impl.*;
+import com.sbt.rnd.meetup2017.transport.api.TransportRuntimeException;
+import com.sbt.rnd.meetup2017.transport.api.TransportTimeoutException;
+import com.sbt.rnd.meetup2017.transport.impl.MessageHandler;
+import com.sbt.rnd.meetup2017.transport.impl.MethodInvocation;
+import com.sbt.rnd.meetup2017.transport.impl.TransportListener;
 import com.sbt.rnd.meetup2017.transport.message.Message;
 import com.sbt.rnd.meetup2017.transport.message.MessageProperties;
 import com.sbt.rnd.meetup2017.transport.message.Serializer;
@@ -9,16 +13,13 @@ import com.sbt.rnd.meetup2017.transport.producer.TransportProducerKafka;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.remoting.support.RemoteExporter;
 import org.springframework.remoting.support.RemoteInvocationBasedExporter;
-import org.springframework.remoting.support.RemotingSupport;
 import org.springframework.util.ClassUtils;
 
-import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Arrays;
+import java.util.List;
 
 public class RpcServerImpl extends RemoteInvocationBasedExporter implements MessageHandler<ConsumerRecord<String, byte[]>>, AutoCloseable, ApiServer {
 
@@ -122,7 +123,7 @@ public class RpcServerImpl extends RemoteInvocationBasedExporter implements Mess
         if (checkTimeOut(message)) {
             reply(message.getProperties(), result);
         } else {
-
+            reply(message.getProperties(), new TransportTimeoutException("Call execution timeout"));
             LOGGER.trace("Reply will not be sent because of call execution timeout. Message headers: {}",
                     message.getProperties());
 
@@ -140,22 +141,40 @@ public class RpcServerImpl extends RemoteInvocationBasedExporter implements Mess
             LOGGER.error("Received message value is null");
             return null;
         }
+        Message message = null;
         try {
-            invoke(Serializer.deserialize(record.value()));
+            message = Serializer.deserialize(record.value());
+        } catch (ClassCastException ex) {
+            LOGGER.error("ClassCastException {}", ex.getMessage());
+            reply(message.getProperties(), new TransportRuntimeException(ex.getMessage(),ex.getCause()));
+            return null;
+        }
 
-        } catch (InvocationTargetException e) {
-            LOGGER.error("InvocationTargetException {}",e.getMessage());
+        try {
+            invoke(message);
+
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (NoSuchMethodException e) {
+            LOGGER.error("Exception {} {}", e.getMessage(),e.getCause());
+            reply(message.getProperties(), new TransportRuntimeException(e.getMessage(),e.getCause()));
+       /* } catch (NoSuchMethodException e) {
             e.printStackTrace();
-            LOGGER.error("NoSuchMethodException {}",e.getMessage());
+            LOGGER.error("NoSuchMethodException {}", e.getMessage());
+            throw new TransportRuntimeException(e.getMessage(), e.getCause());
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-            LOGGER.error("IllegalAccessException {}",e.getMessage());
+            LOGGER.error("IllegalAccessException {}", e.getMessage());
+            throw new TransportRuntimeException(e.getMessage(), e.getCause());
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-            LOGGER.error("ClassNotFoundException {}",e.getMessage());
+            LOGGER.error("ClassNotFoundException {}", e.getCause());
+            throw new TransportRuntimeException(e.getMessage(), e.getCause());
+        } catch (RuntimeException e) {
+            LOGGER.error("RuntimeException {}", e.getMessage());
+            e.printStackTrace();
+            throw new TransportRuntimeException(e.getMessage(), e.getCause());*/
         }
+
         return null;
     }
 
@@ -163,7 +182,7 @@ public class RpcServerImpl extends RemoteInvocationBasedExporter implements Mess
     public void startServer() {
         List<String> topics = Arrays.asList(apiClass.getName());
 
-        MessageHandler handler = new MessageHandler<ConsumerRecord<String, byte[]>>() {
+      /*  MessageHandler handler = new MessageHandler<ConsumerRecord<String, byte[]>>() {
             @Override
             public <V> V handle(ConsumerRecord<String, byte[]> record) {
                 Message<MethodInvocation> message = Serializer.deserialize(record.value());
@@ -184,7 +203,7 @@ public class RpcServerImpl extends RemoteInvocationBasedExporter implements Mess
 
                 return null;
             }
-        };
+        };*/
         new TransportListener(numConsumers, groupId, bootstrapServer, topics).start(this);
         LOGGER.debug("Started ApiServer groupId={} bootstrapServer={} topics={}", groupId, bootstrapServer, topics);
     }
