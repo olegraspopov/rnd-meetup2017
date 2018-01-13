@@ -14,6 +14,7 @@ final class CacheConfig {
         CacheConfiguration<Long, Client> cfg = new CacheConfiguration<>();
         cfg.setCacheMode(CacheMode.PARTITIONED);
         cfg.setName(CLIENT_CACHE_NAME);
+        cfg.setBackups(1);
 
         return cfg;
     }
